@@ -1,7 +1,9 @@
 package ml.anon.web.controller;
 
 import lombok.extern.java.Log;
+import ml.anon.model.anonymization.Anonymization;
 import ml.anon.model.docmgmt.Document;
+import ml.anon.model.docmgmt.DocumentAccess;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,6 +20,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Resource that provides the index page of client application.
@@ -26,7 +33,7 @@ import java.io.IOException;
 @Log
 public class AppController {
 
-
+    private DocumentAccess access = new DocumentAccess(new RestTemplate());
     private RestTemplate restTemplate = new RestTemplate();
 
 
@@ -62,8 +69,19 @@ public class AppController {
 
         ResponseEntity<Document> exchange = restTemplate.exchange("http://127.0.0.1:9001/document/import", HttpMethod.POST, entity, Document.class);
         log.info(String.valueOf(exchange));
-        return exchange;
+        ResponseEntity<Document> res = exchange;
+        Document body = res.getBody();
+        return ResponseEntity.ok(applyRules(body));
 
+
+    }
+
+    private Document applyRules(Document document) {
+        List<Anonymization> result = new ArrayList<>();
+        Map<String, Object> params = new HashMap<>();
+
+        result = restTemplate.postForObject(URI.create("http://127.0.0.1:9002/rules/annotate/" + document.getId()), null, ArrayList.class);
+        return access.updateDocument(document.getId(), result);
 
     }
 
