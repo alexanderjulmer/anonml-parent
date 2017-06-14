@@ -1,7 +1,6 @@
 package ml.anon.web.controller;
 
 import lombok.extern.java.Log;
-import ml.anon.model.anonymization.Anonymization;
 import ml.anon.model.docmgmt.Document;
 import ml.anon.model.docmgmt.DocumentAccess;
 import org.springframework.http.HttpEntity;
@@ -22,9 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Resource that provides the index page of client application.
@@ -77,11 +73,8 @@ public class AppController {
     }
 
     private Document applyRules(Document document) {
-        List<Anonymization> result = new ArrayList<>();
-        Map<String, Object> params = new HashMap<>();
-
-        result = restTemplate.postForObject(URI.create("http://127.0.0.1:9002/rules/annotate/" + document.getId()), null, ArrayList.class);
-        return access.updateDocument(document.getId(), result);
+        return access.updateDocument(document.getId(), restTemplate.postForObject(URI.create("http://127.0.0.1:9002/rules/annotate/" +
+                document.getId()), null, ArrayList.class));
 
     }
 
