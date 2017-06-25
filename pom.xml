@@ -41,11 +41,11 @@
 	</properties>
 
 	<dependencies>
+
 		<dependency>
-			<!-- added instead of the nexus import -->
 			<groupId>ml.anon</groupId>
 			<artifactId>core</artifactId>
-			<version>0.0.2-snapshot</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
