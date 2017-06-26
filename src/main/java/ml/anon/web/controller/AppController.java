@@ -48,22 +48,14 @@ public class AppController {
   }
 
 
-  @PostMapping("/api/annotate")
-  public ResponseEntity<?> callAnnotationService(
-      @RequestParam(value = "tokenizedFile") String tokenizedFile) throws IOException {
-
-    String url = "http://127.0.0.1:9003/ml/annotate";
-    return restTemplate.postForObject(url, tokenizedFile, ResponseEntity.class);
-  }
-  
-  
 
   @PostMapping("/api/save/{id}")
-  public ResponseEntity<?> saveEditedFile(@PathVariable String id, @RequestBody Anonymization... anonymizations) {
+  public ResponseEntity<?> saveEditedFile(@PathVariable String id,
+      @RequestBody Anonymization... anonymizations) {
 
     System.out.println("id: " + id);
     System.out.println("Anon count: " + anonymizations.length);
-    
+
     return ResponseEntity.ok("true");
   }
 
@@ -73,23 +65,25 @@ public class AppController {
   public ResponseEntity<?> callDocumentManagement(@RequestParam(value = "file") MultipartFile file)
       throws IOException {
 
-     byte[] bytes = file.getBytes();
-     String base64 = Base64Utils.encodeToString(bytes);
+    byte[] bytes = file.getBytes();
+    String base64 = Base64Utils.encodeToString(bytes);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.set(HttpHeaders.CONTENT_TYPE, "multipart/form-data");
+    MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+    map.add("doc", base64);
+    map.add("title", file.getOriginalFilename());
+    HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(map, headers);
+
+    ResponseEntity<Document> exchange = restTemplate
+        .exchange("http://127.0.0.1:9001/document/import", HttpMethod.POST, entity, Document.class);
+    log.info(String.valueOf(exchange));
+    ResponseEntity<Document> res = exchange;
+    Document body = res.getBody();
+    body = this.applyRules(body);
+//    body = this.applyML(body);
     
-     HttpHeaders headers = new HttpHeaders();
-     headers.set(HttpHeaders.CONTENT_TYPE, "multipart/form-data");
-     MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-     map.add("doc", base64);
-     map.add("title", file.getOriginalFilename());
-     HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(map, headers);
-    
-     ResponseEntity<Document> exchange =
-     restTemplate.exchange("http://127.0.0.1:9001/document/import", HttpMethod.POST, entity,
-     Document.class);
-     log.info(String.valueOf(exchange));
-     ResponseEntity<Document> res = exchange;
-     Document body = res.getBody();
-     return ResponseEntity.ok(applyRules(body));
+    return ResponseEntity.ok(body);
 
 
   }
@@ -99,6 +93,12 @@ public class AppController {
         restTemplate.postForObject(
             URI.create("http://127.0.0.1:9002/rules/annotate/" + document.getId()), null,
             ArrayList.class));
+
+  }
+
+  private Document applyML(Document document) {
+    return access.updateDocument(document.getId(), restTemplate.postForObject(
+        URI.create("http://127.0.0.1:9003/ml/annotate" + document.getId()), null, ArrayList.class));
 
   }
 
