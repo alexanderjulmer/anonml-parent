@@ -1,9 +1,9 @@
 package ml.anon.web.controller;
 
-import lombok.extern.java.Log;
-import ml.anon.model.anonymization.Anonymization;
-import ml.anon.model.docmgmt.Document;
-import ml.anon.model.docmgmt.DocumentAccess;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,13 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.util.ArrayList;
+import lombok.extern.java.Log;
+import ml.anon.model.anonymization.Anonymization;
+import ml.anon.model.anonymization.Label;
+import ml.anon.model.docmgmt.Document;
+import ml.anon.model.docmgmt.DocumentAccess;
 
 /**
  * Resource that provides the index page of client application.
@@ -50,13 +49,20 @@ public class AppController {
 
 
   @PostMapping("/api/save/{id}")
-  public ResponseEntity<?> saveEditedFile(@PathVariable String id,
-      @RequestBody Anonymization... anonymizations) {
+  public void saveEditedFile(@PathVariable String id,
+      @RequestBody List<Anonymization> anonymizations) {
 
     System.out.println("id: " + id);
-    System.out.println("Anon count: " + anonymizations.length);
+    System.out.println("Anon count: " + anonymizations.size());
 
-    return ResponseEntity.ok("true");
+    access.updateDocument(id, anonymizations);
+    restTemplate.getForObject(URI.create("http://127.0.0.1:9001/document/" + id + "/export"), null);
+
+  }
+
+  @GetMapping(value = "/api/labels")
+  public ResponseEntity<List<Label>> getAllLabels() {
+    return ResponseEntity.ok(Label.getAll());
   }
 
 
@@ -79,27 +85,32 @@ public class AppController {
         .exchange("http://127.0.0.1:9001/document/import", HttpMethod.POST, entity, Document.class);
     log.info(String.valueOf(exchange));
     ResponseEntity<Document> res = exchange;
-    Document body = res.getBody();
-    body = this.applyRules(body);
-//    body = this.applyML(body);
     
+    Document body = res.getBody();
+    
+        
+    List<Anonymization> anonymizations = this.applyRules(body);
+    anonymizations.addAll(this.applyML(body));
+    
+    body = access.updateDocument(body.getId(), anonymizations);
     return ResponseEntity.ok(body);
 
 
   }
 
-  private Document applyRules(Document document) {
-    return access.updateDocument(document.getId(),
-        restTemplate.postForObject(
-            URI.create("http://127.0.0.1:9002/rules/annotate/" + document.getId()), null,
-            ArrayList.class));
+  private List<Anonymization> applyRules(Document document) {
+    return restTemplate.postForObject(
+        URI.create("http://127.0.0.1:9002/rules/annotate/" + document.getId()), null,
+        ArrayList.class);
 
   }
 
-  private Document applyML(Document document) {
-    return access.updateDocument(document.getId(), restTemplate.postForObject(
-        URI.create("http://127.0.0.1:9003/ml/annotate" + document.getId()), null, ArrayList.class));
+  private List<Anonymization> applyML(Document document) {
+    return restTemplate.postForObject(
+        URI.create("http://127.0.0.1:9003/ml/annotate/" + document.getId()), null, ArrayList.class);
 
   }
+
+
 
 }
