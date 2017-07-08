@@ -46,7 +46,7 @@ var AnonymizationHandlerService = (function () {
         this.httpService.getLabels().then(function (labels) { return _this.allLabels = labels; });
     }
     AnonymizationHandlerService.prototype.getText = function () {
-        return this.text;
+        return this.displayableText;
     };
     AnonymizationHandlerService.prototype.getAnonymizations = function () {
         return this.anonymizations.concat(this.temporaryAnonymization);
@@ -82,8 +82,8 @@ var AnonymizationHandlerService = (function () {
         this.temporaryAnonymization.length = 0;
         this.temporaryAnonymization.push(this.actuallyReworking);
     };
-    AnonymizationHandlerService.prototype.findNextAnonymizationParam = function (text, anonymizations) {
-        this.text = text;
+    AnonymizationHandlerService.prototype.setUpParams = function (displayableText, anonymizations) {
+        this.displayableText = displayableText;
         this.anonymizations = anonymizations;
         this.findNextAnonymization();
     };
@@ -107,8 +107,13 @@ var AnonymizationHandlerService = (function () {
             if (this.getAllTouchedAnonymizations().includes(this.anonymizations[i].id)) {
                 continue;
             }
-            foundIndex = this.text.indexOf(this.anonymizations[i].original);
-            if (foundIndex < lowestIndex) {
+            var regex = this.formRegexFromOriginal(this.anonymizations[i].original);
+            foundIndex = this.displayableText.search(new RegExp(regex));
+            if (foundIndex === -1) {
+                console.log(this.anonymizations[i].original + ' not found!');
+                continue;
+            }
+            else if (foundIndex < lowestIndex) {
                 lowestIndex = foundIndex;
                 nextAnonymization = i;
             }
@@ -117,6 +122,11 @@ var AnonymizationHandlerService = (function () {
             this.actuallyReworking = null;
         }
         this.actuallyReworking = this.anonymizations[nextAnonymization];
+    };
+    AnonymizationHandlerService.prototype.formRegexFromOriginal = function (original) {
+        original = original.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+        original = original.replace(/(\s)+/g, '((\\s)+|(<br>)+)');
+        return original;
     };
     AnonymizationHandlerService.prototype.acceptedActualAnonymization = function () {
         console.log('Accepted!');
@@ -199,7 +209,7 @@ module.exports = module.exports.toString();
 /***/ "./src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container-fluid\">\n\t<div class=\"row content\">\n\t\t<div *ngIf=\"!anonymizationHanlderService.text\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\n\t\t\t\t(change)=\"fileHandle($event)\">\n\t\t</div>\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\n\t\t\t(keypress)=\"keyControl($event)\"\n\t\t\t*ngIf=\"anonymizationHanlderService.text\" class=\"col-sm-10 sidenav\">\n\t\t\t{{fileName}}\n\t\t\t<div class=\"panel panel-default\">\n\t\t\t\t<div class=\"panel-body white\" (mouseup)=\"getSelectionText()\"\n\t\t\t\t\t*ngFor=\"let page of anonymizationHanlderService.text\">\n\t\t\t\t\t<div\n\t\t\t\t\t\t[innerHtml]=\"page | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<span>{{selectedText}}</span>\n\t\t</div>\n\t\t<div class=\"col-sm-2\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<h4>Steuerung:</h4>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"col-sm-1\"></div>\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\n\t\t\t\t\t\t\t<td></td>\n\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t: <b>a</b>ccept\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t: <b>d</b>ecline\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t: re<b>w</b>ork\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t: <b>s</b>ave\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<hr>\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\n\t\t\t\t(keyup.enter)=\"enterRework()\">\n\t\t\t\t<table>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><div\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().Label, \n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().original, \n\t\t\t\t\t\t\t\ttrue)\"></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().Label\"\n\t\t\t\t\t\t\tclass=\"form-control\"><option\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\n\t\t\t\t\t\t</select></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().replacement\"></td>\n\t\t\t\t\t</tr>\n\n\n\t\t\t\t</table>\n\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\n\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n\n<footer class=\"container-fluid\">\n\t<p>AnonMl for the win!</p>\n</footer>"
+module.exports = "<div class=\"container-fluid\">\n\t<div class=\"row content\">\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\n\t\t\t\t(change)=\"fileHandle($event)\">\n\t\t</div>\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\n\t\t\t(keypress)=\"keyControl($event)\"\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\" class=\"col-sm-10 sidenav\">\n\t\t\t{{fileName}}\n\t\t\t<div class=\"panel panel-default\">\n\t\t\t\t<div class=\"panel-body white\" (mouseup)=\"getSelectionText()\">\n\t\t\t\t\t<!-- *ngFor=\"let page of anonymizationHanlderService.displayableText\"-->\n\t\t\t\t\t<div\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<span>{{selectedText}}</span>\n\t\t</div>\n\t\t<div class=\"col-sm-2\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<h4>Steuerung:</h4>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"col-sm-1\"></div>\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\n\t\t\t\t\t\t\t<td></td>\n\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t: <b>a</b>ccept\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t: <b>d</b>ecline\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t: re<b>w</b>ork\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t: <b>s</b>ave\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<hr>\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\n\t\t\t\t(keyup.enter)=\"enterRework()\">\n\t\t\t\t<table>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><div\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().label, \n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().original, \n\t\t\t\t\t\t\t\ttrue)\"></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().label\"\n\t\t\t\t\t\t\tclass=\"form-control\"><option\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\n\t\t\t\t\t\t</select></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().replacement\"></td>\n\t\t\t\t\t</tr>\n\n\n\t\t\t\t</table>\n\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\n\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>"
 
 /***/ }),
 
@@ -211,7 +221,6 @@ module.exports = "<div class=\"container-fluid\">\n\t<div class=\"row content\">
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__ = __webpack_require__("./src/app/anonymization-handler.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__http_service__ = __webpack_require__("./src/app/http.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__document__ = __webpack_require__("./src/app/document.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -222,7 +231,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
 
 
 
@@ -248,7 +256,10 @@ var AppComponent = (function () {
             _this.fileName = response.fileName;
             _this.docId = response.id;
             _this.docFileType = response.originalFileType;
-            _this.anonymizationHanlderService.findNextAnonymizationParam(response.text, response.anonymizations);
+            for (var i = 0; i < response.anonymizations.length; ++i) {
+                response.anonymizations[i].id = i + 1;
+            }
+            _this.anonymizationHanlderService.setUpParams(response.displayableText, response.anonymizations);
         });
     };
     AppComponent.prototype.keyControl = function (event) {
@@ -270,13 +281,7 @@ var AppComponent = (function () {
             case 115:
                 console.log('pressed s');
                 if (this.anonymizationHanlderService.getActuallyReworking() === undefined) {
-                    var document = new __WEBPACK_IMPORTED_MODULE_4__document__["a" /* Document */]();
-                    document.anonymizations = this.anonymizationHanlderService.getAnonymizations();
-                    document.fileName = this.fileName;
-                    document.id = this.docId;
-                    document.originalFileType = this.docFileType;
-                    document.text = this.anonymizationHanlderService.getText();
-                    this.httpService.saveFile(document);
+                    this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId);
                 }
                 else {
                     console.log('Document not finished!');
@@ -387,21 +392,6 @@ AppModule = __decorate([
 ], AppModule);
 
 //# sourceMappingURL=app.module.js.map
-
-/***/ }),
-
-/***/ "./src/app/document.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Document; });
-var Document = (function () {
-    function Document() {
-    }
-    return Document;
-}());
-
-//# sourceMappingURL=document.js.map
 
 /***/ }),
 
@@ -541,14 +531,13 @@ var HighlightAnonymizationPipe = (function () {
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
                     replacement = '<span style="background-color:rgb(255,0,0)">[]</span>';
                 }
-                replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].Label, anonymizations[i].original, false);
+                //        console.log('Label: ' + anonymizations[i].label);
+                replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].label, anonymizations[i].original, false);
             }
-            newValue = newValue.replace(new RegExp(this.escape(anonymizations[i].original), 'g'), replacement);
+            //      console.log('Replacement: ' + replacement)
+            newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].original), 'g'), replacement);
         }
         return this.sanitizer.bypassSecurityTrustHtml(newValue);
-    };
-    HighlightAnonymizationPipe.prototype.escape = function (str) {
-        return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
     };
     return HighlightAnonymizationPipe;
 }());
@@ -606,11 +595,11 @@ var HttpService = (function () {
             .toPromise().then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
-    HttpService.prototype.saveFile = function (editedDocument) {
-        var url = 'api/save/' + editedDocument.id;
+    HttpService.prototype.saveFile = function (anonymizations, id) {
+        var url = 'api/save/' + id;
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
         headers.append('Content-Type', 'application/json');
-        return this.http.post(url, JSON.stringify(editedDocument.anonymizations), { headers: headers })
+        return this.http.post(url, JSON.stringify(anonymizations), { headers: headers })
             .toPromise().then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
