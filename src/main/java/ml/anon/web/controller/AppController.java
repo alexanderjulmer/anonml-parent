@@ -5,7 +5,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.deploy.net.HttpResponse;
 import okhttp3.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -51,51 +50,39 @@ public class AppController {
         System.out.println("index page accessed!");
         return "index.html";
     }
+    
+    @PostMapping(value = "/api/update/anonymizations/{id}")
+    public ResponseEntity<Boolean> updateAnonymizations(@PathVariable String id,  @RequestBody List<Anonymization> anonymizations){
+      try {
+        access.updateDocument(id, anonymizations);
+        this.updateTrainingData(id);
+      } catch (Exception e) {
+        log.severe(e.getLocalizedMessage());
+      }
+      
+      return ResponseEntity.ok(true);
+    }
+    
+    @GetMapping(value = "/api/save/{id}", produces = "application/zip")
+    public void saveEditedFile(@PathVariable String id, HttpServletResponse response) throws IOException{
+      
+      System.out.println("export-accessed!");
+      URI url = URI.create("http://127.0.0.1:9001/document/" + id + "/export");
 
-
-    @PostMapping(value = "/api/save/{id}", produces = "application/zip")
-    public void saveEditedFile(@PathVariable String id,
-                                                       @RequestBody List<Anonymization> anonymizations, HttpServletResponse response) throws IOException {
-
-
-        try {
-            access.updateDocument(id, anonymizations);
-            this.updateTrainingData(id);
-        } catch (Exception e) {
-            log.severe(e.getLocalizedMessage());
-        }
-
-        URI url = URI.create("http://127.0.0.1:9001/document/" + id + "/export");
-
-        OkHttpClient client = new OkHttpClient();
-        Request req = new Request.Builder().url(HttpUrl.get(url)).build();
-        Response execute = client.newCall(req).execute();
-        ResponseBody body = execute.body();
-        execute.headers();
-        response.setContentType("application/zip");
-        response.addHeader("Content-Disposition", "attachment; filename=" + id + ".zip");
-        org.apache.commons.io.IOUtils.copy(execute.body().source().inputStream(), response.getOutputStream());
-        response.getOutputStream().flush();
-
+      OkHttpClient client = new OkHttpClient();
+      Request req = new Request.Builder().url(HttpUrl.get(url)).build();
+      Response execute = client.newCall(req).execute();
+      ResponseBody body = execute.body();
+      execute.headers();
+      response.setContentType("application/zip");
+      response.addHeader("Content-Disposition", "attachment; filename=" + id + ".zip");
+      org.apache.commons.io.IOUtils.copy(execute.body().source().inputStream(), response.getOutputStream());
+      response.getOutputStream().flush();
     }
 
     private boolean updateTrainingData(String documentId) {
         return restTemplate.postForObject(
                 URI.create("http://127.0.0.1:9003/ml/update/training/data/" + documentId), null, Boolean.class);
-    }
-
-    @GetMapping(value = "/api/save2/{id}")
-    public void download(@PathVariable String id, HttpServletResponse response) throws IOException {
-        URI url = URI.create("http://127.0.0.1:9001/document/" + id + "/export");
-
-        OkHttpClient client = new OkHttpClient();
-        Request req = new Request.Builder().url(HttpUrl.get(url)).build();
-        Response execute = client.newCall(req).execute();
-        ResponseBody body = execute.body();
-        execute.headers();
-        response.setContentType("application/zip");
-        response.addHeader("Content-Disposition", "attachment; filename=" + id + ".zip");
-        org.apache.commons.io.IOUtils.copy(execute.body().source().inputStream(), response.getOutputStream());
     }
 
     @GetMapping(value = "/api/labels")
