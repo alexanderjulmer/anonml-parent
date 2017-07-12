@@ -5,6 +5,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.deploy.net.HttpResponse;
+import okhttp3.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,6 +31,10 @@ import ml.anon.model.anonymization.Label;
 import ml.anon.model.docmgmt.Document;
 import ml.anon.model.docmgmt.DocumentAccess;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+
 /**
  * Resource that provides the index page of client application.
  */
@@ -36,103 +42,131 @@ import ml.anon.model.docmgmt.DocumentAccess;
 @Log
 public class AppController {
 
-  private DocumentAccess access = new DocumentAccess(new RestTemplate());
-  private RestTemplate restTemplate = new RestTemplate();
+    private DocumentAccess access = new DocumentAccess(new RestTemplate());
+    private RestTemplate restTemplate = new RestTemplate();
 
 
-  @RequestMapping(value = "/", method = RequestMethod.GET)
-  public String index() {
-    System.out.println("index page accessed!");
-    return "index.html";
-  }
-
-
-  @PostMapping("/api/save/{id}")
-  public void saveEditedFile(@PathVariable String id,
-      @RequestBody List<Anonymization> anonymizations) throws IOException {
-    
-    access.updateDocument(id, anonymizations);
-    this.updateTrainingData(id);
-    
-    restTemplate.getForObject(
-        URI.create("http://127.0.0.1:9001/document/" + id + "/export"), Void.class);
-
-  }
-  
-  private boolean updateTrainingData(String documentId) {
-    return restTemplate.postForObject(
-        URI.create("http://127.0.0.1:9003/ml/update/training/data/" + documentId), null, Boolean.class);
-  }
-
-  @GetMapping(value = "/api/labels")
-  public ResponseEntity<List<Label>> getAllLabels() {
-    return ResponseEntity.ok(Label.getAll());
-  }
-  
-  @GetMapping(value = "/api/retrain")
-  public ResponseEntity<Boolean> retrainModel() {
-    
-    ResponseEntity<Boolean> response = restTemplate.getForEntity(URI.create("http://127.0.0.1:9003/ml/retrain/" + "IdOfTrainingsData"), Boolean.class);
-    
-    return ResponseEntity.ok(response.getBody());
-  }
-
-
-  @PostMapping("/api/upload")
-  public ResponseEntity<?> callDocumentManagement(@RequestParam(value = "file") MultipartFile file)
-      throws IOException {
-
-    byte[] bytes = file.getBytes();
-    String base64 = Base64Utils.encodeToString(bytes);
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.set(HttpHeaders.CONTENT_TYPE, "multipart/form-data");
-    MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-    map.add("doc", base64);
-    map.add("title", file.getOriginalFilename());
-    HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(map, headers);
-
-    ResponseEntity<Document> exchange = restTemplate
-        .exchange("http://127.0.0.1:9001/document/import", HttpMethod.POST, entity, Document.class);
-    log.info(String.valueOf(exchange));
-    ResponseEntity<Document> res = exchange;
-
-    Document body = res.getBody();
-
-
-    List<Anonymization> anonymizations = new ArrayList<>();
-    try {
-      anonymizations.addAll(this.applyRules(body));
-    } catch (Exception e) {
-      log.severe("RegEx Service not available");
-      log.severe(e.getLocalizedMessage());
-    }
-    try {
-      anonymizations.addAll(this.applyML(body));
-    } catch (Exception e) {
-      log.severe("ML Service not available");
-      log.severe(e.getLocalizedMessage());
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String index() {
+        System.out.println("index page accessed!");
+        return "index.html";
     }
 
-    body = access.updateDocument(body.getId(), anonymizations);
 
-    return ResponseEntity.ok(body);
+    @PostMapping(value = "/api/save/{id}", produces = "application/zip")
+    public void saveEditedFile(@PathVariable String id,
+                                                       @RequestBody List<Anonymization> anonymizations, HttpServletResponse response) throws IOException {
 
 
-  }
+        try {
+            access.updateDocument(id, anonymizations);
+            this.updateTrainingData(id);
+        } catch (Exception e) {
+            log.severe(e.getLocalizedMessage());
+        }
 
-  private List<Anonymization> applyRules(Document document) {
-    return restTemplate.postForObject(
-        URI.create("http://127.0.0.1:9002/rules/annotate/" + document.getId()), null,
-        ArrayList.class);
+        URI url = URI.create("http://127.0.0.1:9001/document/" + id + "/export");
 
-  }
+        OkHttpClient client = new OkHttpClient();
+        Request req = new Request.Builder().url(HttpUrl.get(url)).build();
+        Response execute = client.newCall(req).execute();
+        ResponseBody body = execute.body();
+        execute.headers();
+        response.setContentType("application/zip");
+        response.addHeader("Content-Disposition", "attachment; filename=" + id + ".zip");
+        org.apache.commons.io.IOUtils.copy(execute.body().source().inputStream(), response.getOutputStream());
+        response.getOutputStream().flush();
 
-  private List<Anonymization> applyML(Document document) {
-    return restTemplate.postForObject(
-        URI.create("http://127.0.0.1:9003/ml/annotate/" + document.getId()), null, ArrayList.class);
+    }
 
-  }
+    private boolean updateTrainingData(String documentId) {
+        return restTemplate.postForObject(
+                URI.create("http://127.0.0.1:9003/ml/update/training/data/" + documentId), null, Boolean.class);
+    }
+
+    @GetMapping(value = "/api/save2/{id}")
+    public void download(@PathVariable String id, HttpServletResponse response) throws IOException {
+        URI url = URI.create("http://127.0.0.1:9001/document/" + id + "/export");
+
+        OkHttpClient client = new OkHttpClient();
+        Request req = new Request.Builder().url(HttpUrl.get(url)).build();
+        Response execute = client.newCall(req).execute();
+        ResponseBody body = execute.body();
+        execute.headers();
+        response.setContentType("application/zip");
+        response.addHeader("Content-Disposition", "attachment; filename=" + id + ".zip");
+        org.apache.commons.io.IOUtils.copy(execute.body().source().inputStream(), response.getOutputStream());
+    }
+
+    @GetMapping(value = "/api/labels")
+    public ResponseEntity<List<Label>> getAllLabels() {
+        return ResponseEntity.ok(Label.getAll());
+    }
+
+    @GetMapping(value = "/api/retrain")
+    public ResponseEntity<Boolean> retrainModel() {
+
+        ResponseEntity<Boolean> response = restTemplate.getForEntity(URI.create("http://127.0.0.1:9003/ml/retrain/" + "IdOfTrainingsData"), Boolean.class);
+
+        return ResponseEntity.ok(response.getBody());
+    }
+
+
+    @PostMapping("/api/upload")
+    public ResponseEntity<?> callDocumentManagement(@RequestParam(value = "file") MultipartFile file)
+            throws IOException {
+
+        byte[] bytes = file.getBytes();
+        String base64 = Base64Utils.encodeToString(bytes);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, "multipart/form-data");
+        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        map.add("doc", base64);
+        map.add("title", file.getOriginalFilename());
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(map, headers);
+
+        ResponseEntity<Document> exchange = restTemplate
+                .exchange("http://127.0.0.1:9001/document/import", HttpMethod.POST, entity, Document.class);
+        log.info(String.valueOf(exchange));
+        ResponseEntity<Document> res = exchange;
+
+        Document body = res.getBody();
+
+
+        List<Anonymization> anonymizations = new ArrayList<>();
+        try {
+            anonymizations.addAll(this.applyRules(body));
+        } catch (Exception e) {
+            log.severe("RegEx Service not available");
+            log.severe(e.getLocalizedMessage());
+        }
+        try {
+            anonymizations.addAll(this.applyML(body));
+        } catch (Exception e) {
+            log.severe("ML Service not available");
+            log.severe(e.getLocalizedMessage());
+        }
+
+        body = access.updateDocument(body.getId(), anonymizations);
+
+        return ResponseEntity.ok(body);
+
+
+    }
+
+    private List<Anonymization> applyRules(Document document) {
+        return restTemplate.postForObject(
+                URI.create("http://127.0.0.1:9002/rules/annotate/" + document.getId()), null,
+                ArrayList.class);
+
+    }
+
+    private List<Anonymization> applyML(Document document) {
+        return restTemplate.postForObject(
+                URI.create("http://127.0.0.1:9003/ml/annotate/" + document.getId()), null, ArrayList.class);
+
+    }
 
 
 }
