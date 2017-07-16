@@ -25,8 +25,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.java.Log;
-import ml.anon.model.anonymization.Anonymization;
-import ml.anon.model.anonymization.Label;
+import ml.anon.anonymization.model.Anonymization;
+import ml.anon.anonymization.model.Label;
 import ml.anon.documentmanagement.model.Document;
 import ml.anon.documentmanagement.resource.DocumentResource;
 
