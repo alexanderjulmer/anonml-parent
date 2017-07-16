@@ -27,12 +27,10 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.extern.java.Log;
 import ml.anon.model.anonymization.Anonymization;
 import ml.anon.model.anonymization.Label;
-import ml.anon.model.docmgmt.Document;
-import ml.anon.model.docmgmt.DocumentAccess;
+import ml.anon.documentmanagement.model.Document;
+import ml.anon.documentmanagement.resource.DocumentResource;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
 
 /**
  * Resource that provides the index page of client application.
@@ -41,7 +39,7 @@ import javax.ws.rs.GET;
 @Log
 public class AppController {
 
-    private DocumentAccess access = new DocumentAccess(new RestTemplate());
+    private DocumentResource access = new DocumentResource(new RestTemplate());
     private RestTemplate restTemplate = new RestTemplate();
 
 
