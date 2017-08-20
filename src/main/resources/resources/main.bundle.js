@@ -125,7 +125,8 @@ var AnonymizationHandlerService = (function () {
     };
     AnonymizationHandlerService.prototype.formRegexFromOriginal = function (original) {
         original = original.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-        original = original.replace(/(\s)+/g, '((\\s)+|(<br>)+)');
+        original = original.replace(/\n/g, '<br/>');
+        //    original = original.replace(/(\s)+/g, '((\\s)+|(<br>)+)');
         return original;
     };
     AnonymizationHandlerService.prototype.acceptedActualAnonymization = function () {
@@ -522,12 +523,8 @@ var HighlightAnonymizationPipe = (function () {
         console.log('Pipe highlightAnonymization entered.');
         var newValue = value;
         var replacement = '';
-        console.log('teeest');
         for (var i = 0; i < anonymizations.length; ++i) {
             replacement = '';
-            if (anonymizations[i].data === undefined) {
-                console.log(anonymizations[i]);
-            }
             if (this.anonymizationHanlderService.getAllTouchedAnonymizations().includes(anonymizations[i].id)) {
                 replacement = '<span style="background-color:DarkGrey">' + anonymizations[i].data.replacement + '</span>';
             }
@@ -535,10 +532,10 @@ var HighlightAnonymizationPipe = (function () {
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
                     replacement = '<span style="background-color:rgb(255,0,0)">[]</span>';
                 }
-                //        console.log('Label: ' + anonymizations[i].label);
-                replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].data.label, anonymizations[i].data.original, false);
+                // console.log('Label: ' + anonymizations[i].label);
+                replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].data.label, anonymizations[i].data.original.replace(/\n/g, '<br/>'), false);
             }
-            //      console.log('Replacement: ' + replacement)
+            // console.log('Replacement: ' + replacement)
             newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g'), replacement);
         }
         return this.sanitizer.bypassSecurityTrustHtml(newValue);
