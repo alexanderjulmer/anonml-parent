@@ -5,7 +5,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import okhttp3.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,7 +41,15 @@ import javax.servlet.http.HttpServletResponse;
 @Log
 public class AppController {
 
-  private DocumentResource documentResource = new DocumentResource(new RestTemplate());
+  @Value("${documentmanagement.service.url}")
+  private String documentManagementUrl;
+  @Value("${rulebased.service.url}")
+  private String rulebasedUrl;
+  @Value("${machinelearning.service.url}")
+  private String machinelearningUrl;
+
+  @Resource
+  private DocumentResource documentResource;
   private RestTemplate restTemplate = new RestTemplate();
 
 
@@ -69,7 +79,7 @@ public class AppController {
       throws IOException {
 
     System.out.println("export-accessed!");
-    URI url = URI.create("http://127.0.0.1:9001/document/" + id + "/export");
+    URI url = URI.create(documentManagementUrl + "/document/" + id + "/export");
 
     OkHttpClient client = new OkHttpClient();
     Request req = new Request.Builder().url(HttpUrl.get(url)).build();
@@ -85,7 +95,7 @@ public class AppController {
 
   private boolean updateTrainingData(String documentId) {
     return restTemplate.postForObject(
-        URI.create("http://127.0.0.1:9003/ml/update/training/data/" + documentId), null,
+        URI.create(machinelearningUrl + "/ml/update/training/data/" + documentId), null,
         Boolean.class);
   }
 
@@ -98,7 +108,7 @@ public class AppController {
   public ResponseEntity<Boolean> retrainModel() {
 
     ResponseEntity<Boolean> response = restTemplate
-        .getForEntity(URI.create("http://127.0.0.1:9003/ml/retrain/" + "IdOfTrainingsData"),
+        .getForEntity(URI.create(machinelearningUrl + "/ml/retrain/" + "IdOfTrainingsData"),
             Boolean.class);
 
     return ResponseEntity.ok(response.getBody());
@@ -120,7 +130,8 @@ public class AppController {
     HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(map, headers);
 
     ResponseEntity<Document> exchange = restTemplate
-        .exchange("http://127.0.0.1:9001/document/import", HttpMethod.POST, entity, Document.class);
+        .exchange(documentManagementUrl + "/document/import", HttpMethod.POST, entity,
+            Document.class);
     log.info(String.valueOf(exchange));
     ResponseEntity<Document> res = exchange;
 
@@ -150,14 +161,14 @@ public class AppController {
 
   private List<Anonymization> applyRules(Document document) {
     return restTemplate.postForObject(
-        URI.create("http://127.0.0.1:9002/rules/annotate/" + document.getId()), null,
+        URI.create(rulebasedUrl + "/rules/annotate/" + document.getId()), null,
         ArrayList.class);
 
   }
 
   private List<Anonymization> applyML(Document document) {
     return restTemplate.postForObject(
-        URI.create("http://127.0.0.1:9003/ml/annotate/" + document.getId()), null, ArrayList.class);
+        URI.create(machinelearningUrl + "/ml/annotate/" + document.getId()), null, ArrayList.class);
 
   }
 
