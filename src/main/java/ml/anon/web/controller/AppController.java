@@ -48,8 +48,10 @@ public class AppController {
   @Value("${machinelearning.service.url}")
   private String machinelearningUrl;
 
-  @Resource
-  private DocumentResource documentResource;
+
+  DocumentResource documentResource = new DocumentResource(new RestTemplate());
+  //@Resource
+  //private DocumentResource documentResource;
   private RestTemplate restTemplate = new RestTemplate();
 
 

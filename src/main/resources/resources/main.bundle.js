@@ -178,9 +178,12 @@ var _a, _b;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__replacement__ = __webpack_require__("./src/app/replacement.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Anonymization; });
+
 var Anonymization = (function () {
     function Anonymization() {
+        this.data = new __WEBPACK_IMPORTED_MODULE_0__replacement__["a" /* Replacement */]();
     }
     return Anonymization;
 }());
@@ -305,19 +308,19 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.getSelectionText = function () {
         console.log('getSelectionText Entered.');
-        var t;
+        var selectedText;
         if (window.getSelection) {
-            t = window.getSelection();
+            selectedText = window.getSelection();
         }
         else if (document.getSelection) {
-            t = document.getSelection();
+            selectedText = document.getSelection();
         }
         // first check for wrong selections
-        if (String(t) === '' || String(t) === ' ') {
+        if (String(selectedText) === '' || String(selectedText) === ' ') {
             return;
         }
         this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__anonymization__["a" /* Anonymization */]();
-        this.tempAnonymization.original = t.toString();
+        this.tempAnonymization.data.original = selectedText.toString();
         this.tempAnonymization.Producer = 'HUMAN';
         this.tempAnonymization.id = this.anonymizationHanlderService.getMaxId() + 1;
         this.anonymizationHanlderService.setActualleReworking(this.tempAnonymization);
@@ -617,6 +620,21 @@ HttpService = __decorate([
 
 var _a;
 //# sourceMappingURL=http.service.js.map
+
+/***/ }),
+
+/***/ "./src/app/replacement.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Replacement; });
+var Replacement = (function () {
+    function Replacement() {
+    }
+    return Replacement;
+}());
+
+//# sourceMappingURL=replacement.js.map
 
 /***/ }),
 
