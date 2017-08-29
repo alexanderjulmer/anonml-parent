@@ -47,10 +47,8 @@ public class AppController {
   private String rulebasedUrl;
   @Value("${machinelearning.service.url}")
   private String machinelearningUrl;
-  
   @Resource
   private DocumentResource documentResource;
-
   private RestTemplate restTemplate = new RestTemplate();
 
 
@@ -65,9 +63,6 @@ public class AppController {
       @RequestBody List<Anonymization> anonymizations) {
     try {
       Document doc = documentResource.findById(id);
-
-      this.calculateFOne(doc.getId(), anonymizations);
-
       doc.setAnonymizations(anonymizations);
       documentResource.update(id, doc);
       this.updateTrainingData(id);
@@ -97,30 +92,22 @@ public class AppController {
     response.getOutputStream().flush();
   }
 
-  private boolean calculateFOne(String documentId,  List<Anonymization> correctAnonymizations){
-
-    return restTemplate.postForObject(URI.create(machinelearningUrl + "/ml/calculate/f/one/" + documentId), correctAnonymizations, Boolean.class);
-  }
-
   private boolean updateTrainingData(String documentId) {
-    System.out.println("update training data");
     return restTemplate.postForObject(
         URI.create(machinelearningUrl + "/ml/update/training/data/" + documentId), null,
         Boolean.class);
   }
-
 
   @GetMapping(value = "/api/labels")
   public ResponseEntity<List<Label>> getAllLabels() {
     return ResponseEntity.ok(Label.getAll());
   }
 
-
   @GetMapping(value = "/api/retrain")
   public ResponseEntity<Boolean> retrainModel() {
 
     ResponseEntity<Boolean> response = restTemplate
-        .getForEntity(URI.create(machinelearningUrl + "/ml/retrain/"),
+        .getForEntity(URI.create(machinelearningUrl + "/ml/retrain/" + "IdOfTrainingsData"),
             Boolean.class);
 
     return ResponseEntity.ok(response.getBody());
