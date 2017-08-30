@@ -321,7 +321,7 @@ var AppComponent = (function () {
         }
         this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__anonymization__["a" /* Anonymization */]();
         this.tempAnonymization.data.original = selectedText.toString();
-        this.tempAnonymization.Producer = 'HUMAN';
+        this.tempAnonymization.producer = 'HUMAN';
         this.tempAnonymization.id = this.anonymizationHanlderService.getMaxId() + 1;
         this.anonymizationHanlderService.setActualleReworking(this.tempAnonymization);
         this.anonymizationHanlderService.setTemporatyAnonymization();
