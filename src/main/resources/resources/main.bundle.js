@@ -45,6 +45,14 @@ var AnonymizationHandlerService = (function () {
         this.temporaryAnonymization = [];
         this.httpService.getLabels().then(function (labels) { return _this.allLabels = labels; });
     }
+    AnonymizationHandlerService.prototype.resetDisplayableText = function () {
+        this.acceptedAnonymizations.length = 0;
+        this.reworkedAnonymizations.length = 0;
+        this.declinedAnonymizations.length = 0;
+        this.addedAnonymizations.length = 0;
+        this.anonymizations.length = 0;
+        this.displayableText = '';
+    };
     AnonymizationHandlerService.prototype.getText = function () {
         return this.displayableText;
     };
@@ -70,8 +78,50 @@ var AnonymizationHandlerService = (function () {
             replacement += '<span style="background-color:rgb( 255 , 255, 255)">' + original + '</span>';
         }
         else {
-            replacement += '<span style="background-color:rgb( 0 , ' + (255 - (indexOfLabel * 25) % 255) + ', '
-                + ((indexOfLabel * 25) % 255) + ')">' + original + '</span>';
+            replacement += '<span style="background-color:';
+            switch (indexOfLabel) {
+                case 0:
+                    replacement += 'rgb(60, 180, 75)';
+                    break;
+                case 1:
+                    replacement += 'rgb(255, 225, 25)';
+                    break;
+                case 2:
+                    replacement += 'rgb(0, 130, 200)';
+                    break;
+                case 3:
+                    replacement += 'rgb(245, 130, 48)';
+                    break;
+                case 4:
+                    replacement += 'rgb(250, 190, 190)';
+                    break;
+                case 5:
+                    replacement += 'rgb(230, 190, 255)';
+                    break;
+                case 6:
+                    replacement += 'rgb(255, 250, 200)';
+                    break;
+                case 7:
+                    replacement += 'rgb(170, 255, 195)';
+                    break;
+                case 8:
+                    replacement += 'rgb(128, 128, 0) ';
+                    break;
+                case 9:
+                    replacement += 'rgb(210, 245, 60)';
+                    break;
+                case 10:
+                    replacement += 'rgb(0, 128, 128)';
+                    break;
+                case 11:
+                    replacement += 'rgb(240, 50, 230)';
+                    break;
+                default:
+                    replacement += 'rgb(255, 215, 180)';
+                    break;
+            }
+            //  0 , ' + (255 - (indexOfLabel * 50) % 255) + ', ' + ((indexOfLabel * 50) % 255)
+            replacement += '">' + original + '</span>';
         }
         if (asHTML) {
             return this.sanitizer.bypassSecurityTrustHtml(replacement);
@@ -213,7 +263,7 @@ module.exports = module.exports.toString();
 /***/ "./src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container-fluid\">\n\t<div class=\"row content\">\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\n\t\t\t\t(change)=\"fileHandle($event)\">\n\t\t</div>\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\n\t\t\t(keypress)=\"keyControl($event)\"\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\n\t\t\t<div class=\"panel panel-default\">\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\n\t\t\t\t\t<!-- *ngFor=\"let page of anonymizationHanlderService.displayableText\"-->\n\t\t\t\t\t<div\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<span>{{selectedText}}</span>\n\t\t</div>\n\t\t<div class=\"col-sm-2\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<h4>Steuerung:</h4>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"col-sm-1\"></div>\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\n\t\t\t\t\t\t\t<td></td>\n\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<hr>\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\n\t\t\t\t(keyup.enter)=\"enterRework()\">\n\t\t\t\t<table>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><div\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, \n\t\t\t\t\t\t\t\ttrue)\"></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\n\t\t\t\t\t\t\tclass=\"form-control\"><option\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\n\t\t\t\t\t\t</select></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\n\t\t\t\t\t</tr>\n\n\n\t\t\t\t</table>\n\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\n\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>"
+module.exports = "<div class=\"container-fluid\">\n\t<div class=\"row content\">\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\n\t\t\t\t(change)=\"fileHandle($event)\">\n\t\t</div>\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\n\t\t\t(keypress)=\"keyControl($event)\"\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\n\t\t\t<div class=\"panel panel-default\">\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\n\t\t\t\t\t<!-- *ngFor=\"let page of anonymizationHanlderService.displayableText\"-->\n\t\t\t\t\t<div\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<span>{{selectedText}}</span>\n\t\t</div>\n\t\t<div class=\"col-sm-2\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<h4>Steuerung:</h4>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"col-sm-1\"></div>\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\n\t\t\t\t\t\t\t<td></td>\n\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<hr>\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\n\t\t\t\t(keyup.enter)=\"enterRework()\">\n\t\t\t\t<table>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><div\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, \n\t\t\t\t\t\t\t\ttrue)\"></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\n\t\t\t\t\t\t\tclass=\"form-control\"><option\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\n\t\t\t\t\t\t</select></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\n\t\t\t\t\t</tr>\n\n\n\t\t\t\t</table>\n\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\n\n\t\t\t\t<hr>\n\t\t\t\t<h4>Farblegende:</h4>\n\t\t\t\t<ul>\n\t\t\t\t\t<li *ngFor=\"let label of anonymizationHanlderService.getLabels()\">\n\t\t\t\t\t\t<div\n\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(label,label,true)\"></div>\n\t\t\t\t\t</li>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>"
 
 /***/ }),
 
@@ -285,9 +335,13 @@ var AppComponent = (function () {
             case 115:
                 console.log('pressed s');
                 if (this.anonymizationHanlderService.getActuallyReworking() === undefined) {
-                    this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId);
+                    if (window.confirm('Wirklich fertig?')) {
+                        this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId);
+                        this.anonymizationHanlderService.resetDisplayableText();
+                    }
                 }
                 else {
+                    window.alert('Es sind noch offene Anonymisierungen vorhanden!');
                     console.log('Document not finished!');
                 }
                 break;
@@ -533,10 +587,13 @@ var HighlightAnonymizationPipe = (function () {
             }
             else {
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
-                    replacement = '<span style="background-color:rgb(255,0,0)">[]</span>';
+                    replacement = '<span style="background-color:rgb(255,0,0)">O</span>';
                 }
                 // console.log('Label: ' + anonymizations[i].label);
                 replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].data.label, anonymizations[i].data.original.replace(/\n/g, '<br/>'), false);
+                if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
+                    replacement += '<span style="background-color:rgb(255,0,0)">O</span>';
+                }
             }
             // console.log('Replacement: ' + replacement)
             newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g'), replacement);

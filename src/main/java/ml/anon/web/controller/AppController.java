@@ -99,7 +99,7 @@ public class AppController {
 
     return restTemplate.postForObject(URI.create(machinelearningUrl + "/ml/calculate/f/one/" + documentId), correctAnonymizations, Boolean.class);
   }
-  
+
   private boolean updateTrainingData(String documentId) {
     return restTemplate.postForObject(
         URI.create(machinelearningUrl + "/ml/update/training/data/" + documentId), null,
