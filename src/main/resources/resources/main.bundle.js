@@ -45,6 +45,9 @@ var AnonymizationHandlerService = (function () {
         this.temporaryAnonymization = [];
         this.httpService.getLabels().then(function (labels) { return _this.allLabels = labels; });
     }
+    /**
+     * Resets the loaded document after it is saved and exported to start over with another one.
+     */
     AnonymizationHandlerService.prototype.resetDisplayableText = function () {
         this.acceptedAnonymizations.length = 0;
         this.reworkedAnonymizations.length = 0;
@@ -62,6 +65,10 @@ var AnonymizationHandlerService = (function () {
     AnonymizationHandlerService.prototype.getAllTouchedAnonymizations = function () {
         return this.acceptedAnonymizations.concat(this.reworkedAnonymizations, this.addedAnonymizations);
     };
+    /**
+     * Sets a given anonymization as actually reworking to be able to rework an newly added one.
+     * @param actual given anonymization to set as actuallyReworking
+     */
     AnonymizationHandlerService.prototype.setActualleReworking = function (actual) {
         this.actuallyReworking = actual;
     };
@@ -71,6 +78,13 @@ var AnonymizationHandlerService = (function () {
     AnonymizationHandlerService.prototype.getLabels = function () {
         return this.allLabels;
     };
+    /**
+     * Generates a <span> element with different background colors based on the index of the given label
+     * @param label one of the loaded labels (e.g. Person, Organization) which the color bases on
+     * @param original the word(-sequence) which is placed in the <span>
+     * @param asHTML directly sanitize as HTML or not
+     * @return a string or a HTML based on the asHTML parameter
+     */
     AnonymizationHandlerService.prototype.generateColorForLabel = function (label, original, asHTML) {
         var replacement = '';
         var indexOfLabel = this.allLabels.indexOf(label);
@@ -137,6 +151,10 @@ var AnonymizationHandlerService = (function () {
         this.anonymizations = anonymizations;
         this.findNextAnonymization();
     };
+    /**
+     * Finds the maximal id of the anonymizations in the anonymization list
+     * @return the highest id of the anonymizations
+     */
     AnonymizationHandlerService.prototype.getMaxId = function () {
         var highestIndex = 0;
         var id;
@@ -148,6 +166,12 @@ var AnonymizationHandlerService = (function () {
         }
         return highestIndex;
     };
+    /**
+     * Finds the anonymization from the anonymizations list which comes next in the displayableText.
+     * Basically looks after the lowest index of the originals with pattern search. This should
+     * help to go from top to bottom through the text. When the lowest is found it is set as
+     * actuallyReworking.
+     */
     AnonymizationHandlerService.prototype.findNextAnonymization = function () {
         console.log('findNextAnonymization accessed.');
         var lowestIndex = Number.MAX_VALUE;
@@ -173,12 +197,22 @@ var AnonymizationHandlerService = (function () {
         }
         this.actuallyReworking = this.anonymizations[nextAnonymization];
     };
+    /**
+     * Escapes all special characters contained in the original, also replaces all "\n" with <br/>
+     * to find it in the displayable text
+     * @param original the original of an anonymization to generate the regex from
+     * @return the formed regex
+     */
     AnonymizationHandlerService.prototype.formRegexFromOriginal = function (original) {
         original = original.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
         original = original.replace(/\n/g, '<br/>');
         //    original = original.replace(/(\s)+/g, '((\\s)+|(<br>)+)');
         return original;
     };
+    /**
+     * Pushes the accepted anonymization to the accepted list and
+     * searches the next one in the text (called if 'a' is pressed)
+     */
     AnonymizationHandlerService.prototype.acceptedActualAnonymization = function () {
         console.log('Accepted!');
         if (this.actuallyReworking == null) {
@@ -188,6 +222,11 @@ var AnonymizationHandlerService = (function () {
         this.acceptedAnonymizations.push(this.actuallyReworking.id);
         this.findNextAnonymization();
     };
+    /**
+     * Pushes the declined anonymization to the declined list, removes it from
+     * the anonymization list and searches the next one in the text
+     * (called if 'd' is pressed)
+     */
     AnonymizationHandlerService.prototype.declineActualAnonymization = function () {
         if (this.actuallyReworking == null) {
             console.log('Document finished!');
@@ -198,6 +237,10 @@ var AnonymizationHandlerService = (function () {
         this.anonymizations.splice(index, 1);
         this.findNextAnonymization();
     };
+    /**
+     * Pushes the actual anonymization to the reworked list and searches the next.
+     * (called if 'enter' is pressed after going to the rework zone)
+     */
     AnonymizationHandlerService.prototype.reworkedActualAnonymization = function () {
         if (this.actuallyReworking == null) {
             console.log('Document finished!');
@@ -206,6 +249,11 @@ var AnonymizationHandlerService = (function () {
         this.reworkedAnonymizations.push(this.actuallyReworking.id);
         this.findNextAnonymization();
     };
+    /**
+     * Adds the newly added anonymization to the anonymization list and searches the next.
+     * (called if 'enter' is pressed after going to the rework zone and
+     * the actually reworking has a id which is the highst + 1)
+     */
     AnonymizationHandlerService.prototype.addedNewAnonymization = function () {
         this.anonymizations.push(this.actuallyReworking);
         this.addedAnonymizations.push(this.actuallyReworking.id);
@@ -302,6 +350,10 @@ var AppComponent = (function () {
     AppComponent.prototype.updatePipe = function () {
         this.trigger++;
     };
+    /**
+     * Uploads the file to the backend and sets up the needed elements from the response
+     * @param event contains the uploaded files
+     */
     AppComponent.prototype.fileHandle = function (event) {
         var _this = this;
         var files = event.target.files || event.srcElement.files;
@@ -316,6 +368,10 @@ var AppComponent = (function () {
             _this.anonymizationHanlderService.setUpParams(response.displayableText, response.anonymizations);
         });
     };
+    /**
+     * Handles the operations on keypress (like a for accept)
+     * @param event the catched keyboard event to check which key is pressed
+     */
     AppComponent.prototype.keyControl = function (event) {
         switch (event.charCode) {
             case 97:
@@ -348,6 +404,10 @@ var AppComponent = (function () {
             default:
         }
     };
+    /**
+     * Sets the focus back to the main area if 'enter' was pressed in the rework area.
+     * In addition calls the necessary handler function for the reworked or added anonymization.
+     */
     AppComponent.prototype.enterRework = function () {
         console.log('Hit Enter!');
         this.focusMainArea.emit(true);
@@ -360,6 +420,10 @@ var AppComponent = (function () {
         }
         this.updatePipe();
     };
+    /**
+     * Sets up a new anonymization with HUMAN as producer if something of the text
+     * is selected.
+     */
     AppComponent.prototype.getSelectionText = function () {
         console.log('getSelectionText Entered.');
         var selectedText;
@@ -576,6 +640,17 @@ var HighlightAnonymizationPipe = (function () {
         this.anonymizationHanlderService = anonymizationHanlderService;
         this.sanitizer = sanitizer;
     }
+    /**
+     * Finds the originals of the anonymizations from the list (with regex) and replaces them in the
+     * displayable text by a <span> element to set a background color according to the Label of the
+     * anonymization. If the anonymization is the next one then there
+     * are added red marks before and after to mark the actually looked at.
+     *
+     * @param value is the text which is actually piped in the view
+     * @param anonymizations is the list of anonymizations which should be highlighted
+     * @param trigger a number which is incremented to trigger the pipe function
+     * @return html with the originals replaced by the <span> object to highlight it
+     */
     HighlightAnonymizationPipe.prototype.transform = function (value, anonymizations, trigger) {
         console.log('Pipe highlightAnonymization entered.');
         var newValue = value;
@@ -589,13 +664,11 @@ var HighlightAnonymizationPipe = (function () {
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
                     replacement = '<span style="background-color:rgb(255,0,0)">O</span>';
                 }
-                // console.log('Label: ' + anonymizations[i].label);
                 replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].data.label, anonymizations[i].data.original.replace(/\n/g, '<br/>'), false);
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
                     replacement += '<span style="background-color:rgb(255,0,0)">O</span>';
                 }
             }
-            // console.log('Replacement: ' + replacement)
             newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g'), replacement);
         }
         return this.sanitizer.bypassSecurityTrustHtml(newValue);
@@ -641,14 +714,23 @@ var HttpService = (function () {
         this.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]({});
         this.options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* RequestOptions */]();
     }
+    /**
+     * Loads all labels from the backend to have the actual ones
+     * @return Promise<string[]> a promise containing a list of strings (label names)
+     */
     HttpService.prototype.getLabels = function () {
         var url = '/api/labels';
         return this.http.get(url).toPromise().then(function (response) { return response.json(); }).catch(this.handleError);
     };
+    /**
+     * Sends the uploaded file as formData and get back the processed file as document object to display it
+     * @param files the actually uploaded file/s
+     * @return Promise<Document> a promise containing the processed file as Document object
+     */
     HttpService.prototype.postFile = function (files) {
         var url = '/api/upload';
         var formData = new FormData();
-        this.options.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */](); // 'Content-Type': 'multipart/form-data'
+        this.options.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
         for (var i = 0; i < files.length; i++) {
             formData.append('file', files[i]);
         }
@@ -656,6 +738,12 @@ var HttpService = (function () {
             .toPromise().then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
+    /**
+     * Sends the manually reworked anonymizations to the backend to update the document.
+     * Additionally calls the api path for the export of the anonymized document.
+     * @param anonymizations a list of updated and added anonymizations
+     * @param id of the document in progress
+     */
     HttpService.prototype.saveFile = function (anonymizations, id) {
         var url = '/api/update/anonymizations/' + id;
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
