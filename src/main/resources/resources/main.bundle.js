@@ -38,10 +38,6 @@ var AnonymizationHandlerService = (function () {
         var _this = this;
         this.httpService = httpService;
         this.sanitizer = sanitizer;
-        this.acceptedAnonymizations = [];
-        this.reworkedAnonymizations = [];
-        this.declinedAnonymizations = [];
-        this.addedAnonymizations = [];
         this.temporaryAnonymization = [];
         this.httpService.getLabels().then(function (labels) { return _this.allLabels = labels; });
     }
@@ -49,10 +45,6 @@ var AnonymizationHandlerService = (function () {
      * Resets the loaded document after it is saved and exported to start over with another one.
      */
     AnonymizationHandlerService.prototype.resetDisplayableText = function () {
-        this.acceptedAnonymizations.length = 0;
-        this.reworkedAnonymizations.length = 0;
-        this.declinedAnonymizations.length = 0;
-        this.addedAnonymizations.length = 0;
         this.anonymizations.length = 0;
         this.displayableText = '';
     };
@@ -62,8 +54,20 @@ var AnonymizationHandlerService = (function () {
     AnonymizationHandlerService.prototype.getAnonymizations = function () {
         return this.anonymizations.concat(this.temporaryAnonymization);
     };
-    AnonymizationHandlerService.prototype.getAllTouchedAnonymizations = function () {
-        return this.acceptedAnonymizations.concat(this.reworkedAnonymizations, this.addedAnonymizations);
+    /**
+     * Finds all of the processed anonymizations which are labeled with the given status.
+     * @param status labeled status to search for
+     * @return list with id's which have the given status
+     */
+    AnonymizationHandlerService.prototype.findAnonymizationsByStatus = function (status) {
+        var foundAnonymizations = [];
+        var allAnonymizations = this.getAnonymizations();
+        for (var i = 0; i < allAnonymizations.length; ++i) {
+            if (allAnonymizations[i].status === status) {
+                foundAnonymizations.push(allAnonymizations[i].id);
+            }
+        }
+        return foundAnonymizations;
     };
     /**
      * Sets a given anonymization as actually reworking to be able to rework an newly added one.
@@ -134,7 +138,6 @@ var AnonymizationHandlerService = (function () {
                     replacement += 'rgb(255, 215, 180)';
                     break;
             }
-            //  0 , ' + (255 - (indexOfLabel * 50) % 255) + ', ' + ((indexOfLabel * 50) % 255)
             replacement += '">' + original + '</span>';
         }
         if (asHTML) {
@@ -178,7 +181,8 @@ var AnonymizationHandlerService = (function () {
         var foundIndex;
         var nextAnonymization = -1;
         for (var i = 0; i < this.anonymizations.length; ++i) {
-            if (this.getAllTouchedAnonymizations().includes(this.anonymizations[i].id)) {
+            if (this.findAnonymizationsByStatus('DECLINED').concat(this.findAnonymizationsByStatus('ACCEPTED'))
+                .includes(this.anonymizations[i].id)) {
                 continue;
             }
             var regex = this.formRegexFromOriginal(this.anonymizations[i].data.original);
@@ -206,7 +210,6 @@ var AnonymizationHandlerService = (function () {
     AnonymizationHandlerService.prototype.formRegexFromOriginal = function (original) {
         original = original.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
         original = original.replace(/\n/g, '<br/>');
-        //    original = original.replace(/(\s)+/g, '((\\s)+|(<br>)+)');
         return original;
     };
     /**
@@ -219,7 +222,7 @@ var AnonymizationHandlerService = (function () {
             console.log('Document finished!');
             return;
         }
-        this.acceptedAnonymizations.push(this.actuallyReworking.id);
+        this.actuallyReworking.status = 'ACCEPTED';
         this.findNextAnonymization();
     };
     /**
@@ -233,8 +236,7 @@ var AnonymizationHandlerService = (function () {
             return;
         }
         var index = this.anonymizations.indexOf(this.actuallyReworking);
-        this.declinedAnonymizations.push(this.actuallyReworking.id);
-        this.anonymizations.splice(index, 1);
+        this.actuallyReworking.status = 'DECLINED';
         this.findNextAnonymization();
     };
     /**
@@ -246,7 +248,7 @@ var AnonymizationHandlerService = (function () {
             console.log('Document finished!');
             return;
         }
-        this.reworkedAnonymizations.push(this.actuallyReworking.id);
+        this.actuallyReworking.status = 'ACCEPTED';
         this.findNextAnonymization();
     };
     /**
@@ -255,8 +257,8 @@ var AnonymizationHandlerService = (function () {
      * the actually reworking has a id which is the highst + 1)
      */
     AnonymizationHandlerService.prototype.addedNewAnonymization = function () {
+        this.actuallyReworking.status = 'ACCEPTED';
         this.anonymizations.push(this.actuallyReworking);
-        this.addedAnonymizations.push(this.actuallyReworking.id);
         this.findNextAnonymization();
         this.temporaryAnonymization.length = 0;
     };
@@ -439,7 +441,10 @@ var AppComponent = (function () {
         }
         this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__anonymization__["a" /* Anonymization */]();
         this.tempAnonymization.data.original = selectedText.toString();
+        this.tempAnonymization.data.label = 'UNKNOWN';
+        this.tempAnonymization.data.replacement = '';
         this.tempAnonymization.producer = 'HUMAN';
+        this.tempAnonymization.status = 'PROCESSING';
         this.tempAnonymization.id = this.anonymizationHanlderService.getMaxId() + 1;
         this.anonymizationHanlderService.setActualleReworking(this.tempAnonymization);
         this.anonymizationHanlderService.setTemporatyAnonymization();
@@ -657,8 +662,11 @@ var HighlightAnonymizationPipe = (function () {
         var replacement = '';
         for (var i = 0; i < anonymizations.length; ++i) {
             replacement = '';
-            if (this.anonymizationHanlderService.getAllTouchedAnonymizations().includes(anonymizations[i].id)) {
+            if (this.anonymizationHanlderService.findAnonymizationsByStatus('ACCEPTED').includes(anonymizations[i].id)) {
                 replacement = '<span style="background-color:DarkGrey">' + anonymizations[i].data.replacement + '</span>';
+            }
+            else if (this.anonymizationHanlderService.findAnonymizationsByStatus('DECLINED').includes(anonymizations[i].id)) {
+                replacement = '<span style="background-color:rgb(242, 250, 255)">' + anonymizations[i].data.original + '</span>';
             }
             else {
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
