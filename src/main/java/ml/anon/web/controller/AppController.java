@@ -64,11 +64,11 @@ public class AppController {
   public ResponseEntity<Boolean> updateAnonymizations(@PathVariable String id,
       @RequestBody List<Anonymization> anonymizations) {
     try {
+
       Document doc = documentResource.findById(id);
-      this.calculateFOne(doc.getId(), anonymizations);
       doc.setAnonymizations(anonymizations);
       documentResource.update(id, doc);
-      this.updateTrainingData(id);
+
     } catch (Exception e) {
       log.severe(e.getLocalizedMessage());
     }
@@ -81,6 +81,12 @@ public class AppController {
       throws IOException {
 
     System.out.println("export-accessed!");
+
+    this.calculateFOne(id);
+    this.updateTrainingData(id);
+
+
+
     URI url = URI.create(documentManagementUrl + "/document/" + id + "/export");
 
     OkHttpClient client = new OkHttpClient();
@@ -95,9 +101,9 @@ public class AppController {
     response.getOutputStream().flush();
   }
 
-  private boolean calculateFOne(String documentId,  List<Anonymization> correctAnonymizations){
+  private boolean calculateFOne(String documentId){
 
-    return restTemplate.postForObject(URI.create(machinelearningUrl + "/ml/calculate/f/one/" + documentId), correctAnonymizations, Boolean.class);
+    return restTemplate.getForObject(URI.create(machinelearningUrl + "/ml/calculate/f/one/" + documentId), Boolean.class);
   }
 
   private boolean updateTrainingData(String documentId) {
