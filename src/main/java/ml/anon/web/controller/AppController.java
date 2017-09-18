@@ -54,10 +54,16 @@ public class AppController {
   private RestTemplate restTemplate = new RestTemplate();
 
 
-  @RequestMapping(value = "/", method = RequestMethod.GET)
+  @RequestMapping(value = {"/", "/document/{id}"}, method = RequestMethod.GET)
   public String index() {
     System.out.println("index page accessed!");
-    return "index.html";
+    return "forward:/index.html";
+  }
+
+  @RequestMapping(value = "/api/document/{id}", method = RequestMethod.GET)
+  public ResponseEntity<Document> loadDocument(@PathVariable("id") String id) {
+      System.out.println("Pre load document!");
+      return ResponseEntity.ok(documentResource.findById(id));
   }
 
   @PostMapping(value = "/api/update/anonymizations/{id}")
@@ -85,8 +91,6 @@ public class AppController {
     this.calculateFOne(id);
     this.updateTrainingData(id);
 
-
-
     URI url = URI.create(documentManagementUrl + "/document/" + id + "/export");
 
     OkHttpClient client = new OkHttpClient();
@@ -103,7 +107,7 @@ public class AppController {
 
   private boolean calculateFOne(String documentId){
 
-    return restTemplate.getForObject(URI.create(machinelearningUrl + "/ml/calculate/f/one/" + documentId), Boolean.class);
+    return restTemplate.postForObject(URI.create(machinelearningUrl + "/ml/calculate/f/one/" + documentId), null,Boolean.class);
   }
 
   private boolean updateTrainingData(String documentId) {
