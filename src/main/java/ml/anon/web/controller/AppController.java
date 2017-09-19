@@ -77,6 +77,7 @@ public class AppController {
             doc.setAnonymizations(anonymizations);
             doc.setVersion(Integer.valueOf(version));
             documentResource.update(id, doc);
+            this.calculateFOne(id);
 
         } catch (Exception e) {
             log.severe(e.getLocalizedMessage());
@@ -90,11 +91,7 @@ public class AppController {
     public void saveEditedFile(@PathVariable String id, HttpServletResponse response)
             throws IOException {
 
-        System.out.println("export-accessed!");
-
-        this.calculateFOne(id);
-        this.updateTrainingData(id);
-
+        log.info("export-accessed!");
         URI url = URI.create(documentManagementUrl + "/document/" + id + "/export");
 
         OkHttpClient client = new OkHttpClient();
