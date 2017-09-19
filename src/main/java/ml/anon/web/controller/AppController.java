@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.Resource;
 
 import ml.anon.documentmanagement.model.DocumentState;
@@ -67,17 +68,19 @@ public class AppController {
         return ResponseEntity.ok(document);
     }
 
-    @PostMapping(value = "/api/update/anonymizations/{id}")
-    public ResponseEntity<Boolean> updateAnonymizations(@PathVariable String id,
+    @PostMapping(value = "/api/update/anonymizations/{id}/{version}")
+    public ResponseEntity<Boolean> updateAnonymizations(@PathVariable String id, @PathVariable String version,
                                                         @RequestBody List<Anonymization> anonymizations) {
         try {
 
             Document doc = documentResource.findById(id);
             doc.setAnonymizations(anonymizations);
+            doc.setVersion(Integer.valueOf(version));
             documentResource.update(id, doc);
 
         } catch (Exception e) {
             log.severe(e.getLocalizedMessage());
+            return ResponseEntity.ok(false);
         }
 
         return ResponseEntity.ok(true);
