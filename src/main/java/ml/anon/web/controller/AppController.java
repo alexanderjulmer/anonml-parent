@@ -7,16 +7,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import ml.anon.documentmanagement.model.DocumentState;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Base64Utils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,14 +52,19 @@ public class AppController {
 
     @RequestMapping(value = {"/", "/document/{id}"}, method = RequestMethod.GET)
     public String index() {
-        System.out.println("index page accessed!");
+        log.info("Index page accessed");
         return "forward:/index.html";
     }
 
     @RequestMapping(value = "/api/document/{id}", method = RequestMethod.GET)
     public ResponseEntity<Document> loadDocument(@PathVariable("id") String id) {
-        System.out.println("Pre load document!");
-        return ResponseEntity.ok(documentResource.findById(id));
+        log.info("Pre load document!");
+        Document document = documentResource.findById(id);
+        if (document.getState() == DocumentState.UPLOADED) {
+            log.info("Analyzing document" + id);
+            document = analyzeDoc(document);
+        }
+        return ResponseEntity.ok(document);
     }
 
     @PostMapping(value = "/api/update/anonymizations/{id}")
@@ -139,26 +139,32 @@ public class AppController {
         byte[] bytes = file.getBytes();
         Document body = documentResource.importDocument(file.getOriginalFilename(), bytes);
 
+        body = analyzeDoc(body);
+
+        return ResponseEntity.ok(body);
+
+
+    }
+
+    private Document analyzeDoc(Document body) {
         List<Anonymization> anonymizations = new ArrayList<>();
         try {
-            anonymizations.addAll(this.applyRules(body));
+            anonymizations.addAll(applyRules(body));
         } catch (Exception e) {
             log.severe("RegEx Service not available");
             log.severe(e.getLocalizedMessage());
         }
         try {
-            anonymizations.addAll(this.applyML(body));
+            anonymizations.addAll(applyML(body));
         } catch (Exception e) {
             log.severe("ML Service not available");
             log.severe(e.getLocalizedMessage());
         }
         Document doc = documentResource.findById(body.getId());
         doc.setAnonymizations(anonymizations);
+        doc.setState(DocumentState.IN_PROGRESS);
         body = documentResource.update(body.getId(), doc);
-
-        return ResponseEntity.ok(body);
-
-
+        return body;
     }
 
     private List<Anonymization> applyRules(Document document) {
