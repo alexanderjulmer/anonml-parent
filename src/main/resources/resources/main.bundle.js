@@ -54,6 +54,26 @@ var AnonymizationHandlerService = (function () {
     AnonymizationHandlerService.prototype.getAnonymizations = function () {
         return this.anonymizations.concat(this.temporaryAnonymization);
     };
+    AnonymizationHandlerService.prototype.findAnonymizationById = function (id) {
+        for (var i = 0; i < this.anonymizations.length; ++i) {
+            if (id === this.anonymizations[i].id) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    AnonymizationHandlerService.prototype.reActivateAnonymization = function (id) {
+        var index = this.findAnonymizationById(id);
+        console.log('found index: ' + index);
+        if (this.anonymizations[index].status !== 'PROCESSING') {
+            var anonymization = this.anonymizations[index].status = 'PROCESSING';
+            this.actuallyReworking = this.anonymizations[index];
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
     /**
      * Finds all of the processed anonymizations which are labeled with the given status.
      * @param status labeled status to search for
@@ -434,7 +454,7 @@ module.exports = module.exports.toString();
 /***/ "./src/app/control.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container-fluid\">\n\t<div class=\"row content\">\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\n\t\t\t\t(change)=\"fileHandle($event)\">\n\t\t</div>\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\n\t\t\t(keypress)=\"keyControl($event)\"\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\n\t\t\t<div class=\"panel panel-default\">\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\n\t\t\t\t\t<!-- *ngFor=\"let page of anonymizationHanlderService.displayableText\"-->\n\t\t\t\t\t<div\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<span>{{selectedText}}</span>\n\t\t</div>\n\t\t<div class=\"col-sm-2\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<a target=\"_blank\" href=\"http://localhost:7000/overview\"><button type=\"button\"\n\t\t\t\t\t\tclass=\"btn btn-link\">Dokumentenmanagement</button></a>&nbsp;<a target=\"_blank\"\n\t\t\t\t\thref=\"https://github.com/anon-ml/anonml-gui/wiki/Control\"><button\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Help</button></a>\n\n\t\t\t</div>\n\t\t\t<hr>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<h4>Steuerung:</h4>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"col-sm-1\"></div>\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\n\t\t\t\t\t\t\t<td></td>\n\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<hr>\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\n\t\t\t\t(keyup.enter)=\"enterRework()\">\n\t\t\t\t<table>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><div\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, \n\t\t\t\t\t\t\t\ttrue)\"></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\n\t\t\t\t\t\t\tclass=\"form-control\"><option\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\n\t\t\t\t\t\t</select></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\n\t\t\t\t\t</tr>\n\n\n\t\t\t\t</table>\n\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\n\n\t\t\t\t<hr>\n\t\t\t\t<h4>Farblegende:</h4>\n\t\t\t\t<ul>\n\t\t\t\t\t<li *ngFor=\"let label of anonymizationHanlderService.getLabels()\">\n\t\t\t\t\t\t<div\n\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(label,label,true)\"></div>\n\t\t\t\t\t</li>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n"
+module.exports = "<div class=\"container-fluid\">\r\n\t<div class=\"row content\">\r\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\r\n\t\t\t\t(change)=\"fileHandle($event)\">\r\n\t\t</div>\r\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\r\n\t\t\t(keypress)=\"keyControl($event)\"\r\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\r\n\t\t\t<div class=\"panel panel-default\">\r\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\r\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\r\n\t\t\t\t\t<!-- *ngFor=\"let page of anonymizationHanlderService.displayableText\"-->\r\n\t\t\t\t\t<div\r\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<span>{{selectedText}}</span>\r\n\t\t</div>\r\n\t\t<div class=\"col-sm-2\">\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<a target=\"_blank\" href=\"http://localhost:7000/overview\"><button type=\"button\"\r\n\t\t\t\t\t\tclass=\"btn btn-link\">Dokumentenmanagement</button></a>&nbsp;<a target=\"_blank\"\r\n\t\t\t\t\thref=\"https://github.com/anon-ml/anonml-gui/wiki/Control\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Help</button></a>\r\n\r\n\t\t\t</div>\r\n\t\t\t<hr>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<h4>Steuerung:</h4>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div class=\"col-sm-1\"></div>\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\r\n\t\t\t\t\t\t\t<td></td>\r\n\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\r\n\t\t\t<hr>\r\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\r\n\t\t\t\t(keyup.enter)=\"enterRework()\">\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><div\r\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, \r\n\t\t\t\t\t\t\t\ttrue)\"></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\r\n\t\t\t\t\t\t\tclass=\"form-control\"><option\r\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\r\n\t\t\t\t\t\t</select></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\r\n\t\t\t\t</table>\r\n\r\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\r\n\r\n\t\t\t\t<hr>\r\n\t\t\t\t<h4>Farblegende:</h4>\r\n\t\t\t\t<ul>\r\n\t\t\t\t\t<li *ngFor=\"let label of anonymizationHanlderService.getLabels()\">\r\n\t\t\t\t\t\t<div\r\n\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(label,label,true)\"></div>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -582,6 +602,17 @@ var ControlComponent = (function () {
         this.updatePipe();
         this.save();
     };
+    ControlComponent.prototype.findIdOfSelectedSpan = function (selectedText) {
+        var spanTags = document.getElementsByTagName('span');
+        var foundId = -1;
+        for (var i = 0; i < spanTags.length; i++) {
+            if (spanTags[i].textContent === selectedText.toString()) {
+                foundId = +spanTags[i].id;
+                break;
+            }
+        }
+        return foundId;
+    };
     /**
      * Sets up a new anonymization with HUMAN as producer if something of the text
      * is selected.
@@ -594,6 +625,12 @@ var ControlComponent = (function () {
         }
         else if (document.getSelection) {
             selectedText = document.getSelection();
+        }
+        var id = this.findIdOfSelectedSpan(selectedText);
+        if (id !== -1 && id !== 0) {
+            if (this.anonymizationHanlderService.reActivateAnonymization(id)) {
+                return;
+            }
         }
         // first check for wrong selections
         if (String(selectedText) === '' || String(selectedText) === ' ') {
@@ -769,10 +806,13 @@ var HighlightAnonymizationPipe = (function () {
         for (var i = 0; i < anonymizations.length; ++i) {
             replacement = '';
             if (this.anonymizationHanlderService.findAnonymizationsByStatus('ACCEPTED').includes(anonymizations[i].id)) {
-                replacement = '<span style="background-color:DarkGrey">' + anonymizations[i].data.replacement + '</span>';
+                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:DarkGrey" data-toggle="tooltip" title="'
+                    + anonymizations[i].data.original + '">'
+                    + anonymizations[i].data.replacement + '</span>';
             }
             else if (this.anonymizationHanlderService.findAnonymizationsByStatus('DECLINED').includes(anonymizations[i].id)) {
-                replacement = '<span style="background-color:rgb(242, 250, 255)">' + anonymizations[i].data.original + '</span>';
+                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:rgb(242, 250, 255)">'
+                    + anonymizations[i].data.original + '</span>';
             }
             else {
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
