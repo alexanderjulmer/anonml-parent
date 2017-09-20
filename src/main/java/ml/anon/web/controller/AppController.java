@@ -69,22 +69,23 @@ public class AppController {
     }
 
     @PostMapping(value = "/api/update/anonymizations/{id}/{version}")
-    public ResponseEntity<Boolean> updateAnonymizations(@PathVariable String id, @PathVariable String version,
+    public ResponseEntity<Integer> updateAnonymizations(@PathVariable String id, @PathVariable String version,
                                                         @RequestBody List<Anonymization> anonymizations) {
+        int newVersion = -1;
         try {
 
             Document doc = documentResource.findById(id);
             doc.setAnonymizations(anonymizations);
             doc.setVersion(Integer.valueOf(version));
-            documentResource.update(id, doc);
+            newVersion = documentResource.update(id, doc).getVersion();
             this.calculateFOne(id);
 
         } catch (Exception e) {
             log.severe(e.getLocalizedMessage());
-            return ResponseEntity.ok(false);
+            return ResponseEntity.ok(-1);
         }
 
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(newVersion);
     }
 
     @GetMapping(value = "/api/save/{id}", produces = "application/zip")

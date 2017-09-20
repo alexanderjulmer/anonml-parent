@@ -501,6 +501,7 @@ var ControlComponent = (function () {
     ControlComponent.prototype.setUpFromDocument = function (document) {
         this.fileName = document.fileName;
         this.docId = document.id;
+        this.version = document.version;
         this.docFileType = document.originalFileType;
         for (var i = 0; i < document.anonymizations.length; ++i) {
             document.anonymizations[i].id = i + 1;
@@ -517,7 +518,7 @@ var ControlComponent = (function () {
                 console.log('pressed a');
                 this.anonymizationHanlderService.acceptedActualAnonymization();
                 this.updatePipe();
-                this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId);
+                this.save();
                 break;
             case 119:
                 console.log('pressed w');
@@ -527,7 +528,7 @@ var ControlComponent = (function () {
                 console.log('pressed d');
                 this.anonymizationHanlderService.declineActualAnonymization();
                 this.updatePipe();
-                this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId);
+                this.save();
                 break;
             case 115:
                 console.log('pressed s');
@@ -545,6 +546,25 @@ var ControlComponent = (function () {
             default:
         }
     };
+    ControlComponent.prototype.save = function () {
+        var _this = this;
+        this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId, this.version)
+            .then(function (response) {
+            console.log('Response: ' + response);
+            if (response === -1) {
+                if (window.confirm('Das Dokument ist nicht mehr aktuell!\nNeuen Stand laden?')) {
+                    _this.httpService.getDocument(_this.docId).then(function (response2) { return _this.setUpFromDocument(response2); });
+                }
+                else {
+                    window.alert('Weitere �nderungen werden nicht gespeichert!');
+                }
+            }
+            else {
+                _this.version = response;
+            }
+            _this.httpService.unluckExport(_this.docId);
+        });
+    };
     /**
      * Sets the focus back to the main area if 'enter' was pressed in the rework area.
      * In addition calls the necessary handler function for the reworked or added anonymization.
@@ -560,7 +580,7 @@ var ControlComponent = (function () {
             this.anonymizationHanlderService.reworkedActualAnonymization();
         }
         this.updatePipe();
-        this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId);
+        this.save();
     };
     /**
      * Sets up a new anonymization with HUMAN as producer if something of the text
@@ -842,25 +862,25 @@ var HttpService = (function () {
             .toPromise().then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
+    HttpService.prototype.unluckExport = function (docId) {
+        this.lockedExport = false;
+        if (this.exportAccessed) {
+            this.exportFile(docId);
+        }
+    };
     /**
      * Sends the manually reworked anonymizations to the backend to update the document.
      * Additionally calls the api path for the export of the anonymized document.
      * @param anonymizations a list of updated and added anonymizations
      * @param id of the document in progress
      */
-    HttpService.prototype.saveFile = function (anonymizations, id) {
-        var _this = this;
+    HttpService.prototype.saveFile = function (anonymizations, id, version) {
         this.lockedExport = true;
-        var url = '/api/update/anonymizations/' + id;
+        var url = '/api/update/anonymizations/' + id + '/' + version;
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
         headers.append('Content-Type', 'application/json');
-        this.http.post(url, JSON.stringify(anonymizations), { headers: headers })
-            .toPromise().then(function (Response) {
-            _this.lockedExport = false;
-            if (_this.exportAccessed) {
-                _this.exportFile(id);
-            }
-        })
+        return this.http.post(url, JSON.stringify(anonymizations), { headers: headers })
+            .toPromise().then(function (response) { return Number(response.text()); })
             .catch(this.handleError);
     };
     HttpService.prototype.exportFile = function (id) {
