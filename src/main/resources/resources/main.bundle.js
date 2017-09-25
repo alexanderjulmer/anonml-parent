@@ -56,7 +56,7 @@ var AnonymizationHandlerService = (function () {
         return this.displayableText;
     };
     AnonymizationHandlerService.prototype.getAnonymizations = function () {
-        return this.anonymizations.concat(this.temporaryAnonymization);
+        return this.temporaryAnonymization.concat(this.anonymizations.concat());
     };
     AnonymizationHandlerService.prototype.findAnonymizationById = function (id) {
         for (var i = 0; i < this.anonymizations.length; ++i) {
@@ -814,8 +814,6 @@ var HighlightAnonymizationPipe = (function () {
         console.log('Pipe highlightAnonymization entered.');
         var newValue = value;
         var replacement = '';
-        // ###################
-        console.log(anonymizations);
         for (var i = 0; i < anonymizations.length; ++i) {
             replacement = '';
             if (this.anonymizationHanlderService.findAnonymizationsByStatus('ACCEPTED').includes(anonymizations[i].id)) {
@@ -824,8 +822,8 @@ var HighlightAnonymizationPipe = (function () {
                     + anonymizations[i].data.replacement + '</span>';
             }
             else if (this.anonymizationHanlderService.findAnonymizationsByStatus('DECLINED').includes(anonymizations[i].id)) {
-                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:rgb(242, 250, 255)">'
-                    + anonymizations[i].data.original + '</span>';
+                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:rgb(150, 200, 255, 0.1)">'
+                    + anonymizations[i].data.original.replace(/\n/g, '<br/>') + '</span>';
             }
             else {
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
