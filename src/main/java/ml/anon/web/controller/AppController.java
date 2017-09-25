@@ -9,6 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.Resource;
 
 import ml.anon.documentmanagement.model.DocumentState;
+import ml.anon.documentmanagement.model.FileType;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -69,20 +70,23 @@ public class AppController {
     }
 
     @PostMapping(value = "/api/update/anonymizations/{id}/{version}")
-    public ResponseEntity<Integer> updateAnonymizations(@PathVariable String id, @PathVariable String version,
+    public ResponseEntity<Document> updateAnonymizations(@PathVariable String id, @PathVariable String version,
                                                         @RequestBody List<Anonymization> anonymizations) {
-        int newVersion = -1;
+
+        Document newVersion;
+        FileType originalFileType = FileType.PDF;
         try {
 
             Document doc = documentResource.findById(id);
+            originalFileType = doc.getOriginalFileType();
             doc.setAnonymizations(anonymizations);
             doc.setVersion(Integer.valueOf(version));
-            newVersion = documentResource.update(id, doc).getVersion();
+            newVersion = documentResource.update(id, doc);
             this.calculateFOne(id);
 
         } catch (Exception e) {
             log.severe(e.getLocalizedMessage());
-            return ResponseEntity.ok(-1);
+            return ResponseEntity.ok(Document.builder().originalFileType(originalFileType).version(-1).build());
         }
 
         return ResponseEntity.ok(newVersion);

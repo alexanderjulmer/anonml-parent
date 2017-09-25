@@ -48,6 +48,10 @@ var AnonymizationHandlerService = (function () {
         this.anonymizations.length = 0;
         this.displayableText = '';
     };
+    AnonymizationHandlerService.prototype.setAnonymizations = function (anonymizations) {
+        this.anonymizations = anonymizations;
+        this.findNextAnonymization();
+    };
     AnonymizationHandlerService.prototype.getText = function () {
         return this.displayableText;
     };
@@ -570,8 +574,7 @@ var ControlComponent = (function () {
         var _this = this;
         this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId, this.version)
             .then(function (response) {
-            console.log('Response: ' + response);
-            if (response === -1) {
+            if (response.version === -1) {
                 if (window.confirm('Das Dokument ist nicht mehr aktuell!\nNeuen Stand laden?')) {
                     _this.httpService.getDocument(_this.docId).then(function (response2) { return _this.setUpFromDocument(response2); });
                 }
@@ -580,9 +583,10 @@ var ControlComponent = (function () {
                 }
             }
             else {
-                _this.version = response;
+                _this.setUpFromDocument(response);
+                _this.updatePipe();
             }
-            _this.httpService.unluckExport(_this.docId);
+            _this.httpService.unlockExport(_this.docId);
         });
     };
     /**
@@ -599,7 +603,6 @@ var ControlComponent = (function () {
         else {
             this.anonymizationHanlderService.reworkedActualAnonymization();
         }
-        this.updatePipe();
         this.save();
     };
     ControlComponent.prototype.findIdOfSelectedSpan = function (selectedText) {
@@ -803,6 +806,8 @@ var HighlightAnonymizationPipe = (function () {
         console.log('Pipe highlightAnonymization entered.');
         var newValue = value;
         var replacement = '';
+        // ###################
+        console.log(anonymizations);
         for (var i = 0; i < anonymizations.length; ++i) {
             replacement = '';
             if (this.anonymizationHanlderService.findAnonymizationsByStatus('ACCEPTED').includes(anonymizations[i].id)) {
@@ -902,7 +907,7 @@ var HttpService = (function () {
             .toPromise().then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
-    HttpService.prototype.unluckExport = function (docId) {
+    HttpService.prototype.unlockExport = function (docId) {
         this.lockedExport = false;
         if (this.exportAccessed) {
             this.exportFile(docId);
@@ -920,7 +925,7 @@ var HttpService = (function () {
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
         headers.append('Content-Type', 'application/json');
         return this.http.post(url, JSON.stringify(anonymizations), { headers: headers })
-            .toPromise().then(function (response) { return Number(response.text()); })
+            .toPromise().then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
     HttpService.prototype.exportFile = function (id) {
