@@ -236,6 +236,14 @@ var AnonymizationHandlerService = (function () {
         original = original.replace(/\n/g, '<br/>');
         return original;
     };
+    AnonymizationHandlerService.prototype.notFindOriginal = function (original) {
+        var notFindable = '';
+        for (var i = 0; i < original.length; ++i) {
+            notFindable += original[i];
+            notFindable += '&zwnj;';
+        }
+        return notFindable;
+    };
     /**
      * Pushes the accepted anonymization to the accepted list and
      * searches the next one in the text (called if 'a' is pressed)
@@ -812,7 +820,7 @@ var HighlightAnonymizationPipe = (function () {
             replacement = '';
             if (this.anonymizationHanlderService.findAnonymizationsByStatus('ACCEPTED').includes(anonymizations[i].id)) {
                 replacement = '<span id =' + anonymizations[i].id + ' style="background-color:DarkGrey" data-toggle="tooltip" title="'
-                    + anonymizations[i].data.original + '">'
+                    + this.anonymizationHanlderService.notFindOriginal(anonymizations[i].data.original) + '">'
                     + anonymizations[i].data.replacement + '</span>';
             }
             else if (this.anonymizationHanlderService.findAnonymizationsByStatus('DECLINED').includes(anonymizations[i].id)) {
