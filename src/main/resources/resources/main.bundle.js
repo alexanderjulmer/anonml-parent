@@ -428,7 +428,7 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_5__highlight_anonymization_pipe__["a" /* HighlightAnonymizationPipe */],
             __WEBPACK_IMPORTED_MODULE_6__focus_rework_directive__["a" /* FocusReworkDirective */],
             __WEBPACK_IMPORTED_MODULE_7__focus_main_directive__["a" /* FocusMainDirective */],
-            __WEBPACK_IMPORTED_MODULE_9__control_component__["a" /* ControlComponent */]
+            __WEBPACK_IMPORTED_MODULE_9__control_component__["a" /* ControlComponent */],
         ],
         imports: [
             __WEBPACK_IMPORTED_MODULE_8__angular_router__["a" /* RouterModule */].forRoot(appRoutes),
@@ -453,7 +453,7 @@ exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/cs
 
 
 // module
-exports.push([module.i, "/* Set height of the grid so .sidenav can be 100% (adjust if needed) */\r\n.row.content {\r\n\theight: 1500px;\r\n}\r\n\r\n/* Set gray background color and 100% height */\r\n.sidenav {\r\n\tbackground-color: #f1f1f1;\r\n\theight: 100%;\r\n\tpadding-left: 5%;\r\n\tpadding-top: 1%;\r\n}\r\n\r\n/* Set black background color, white text and some padding */\r\nfooter {\r\n\tbackground-color: #555;\r\n\tcolor: white;\r\n\tpadding: 15px;\r\n}\r\n\r\n/* On small screens, set height to 'auto' for sidenav and grid */\r\n@media screen and (max-width: 767px) {\r\n\t.sidenav {\r\n\t\theight: auto;\r\n\t\tpadding: 15px;\r\n\t}\r\n\t.row.content {\r\n\t\theight: auto;\r\n\t}\r\n}\r\n\r\n.btn-sq-lg {\r\n  width:65px !important;\r\n  height:65px !important;\r\n}\r\n\r\n.btn-sq-sm {\r\n  width:32px !important;\r\n  height:32px !important;\r\n}\r\n\r\n/* layout.css Style */\r\n.upload-drop-zone {\r\n  height: 30%;\r\n  width: 100%;\r\n  border-width: 2px;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n/* skin.css Style*/\r\n.upload-drop-zone {\r\n  color: #ccc;\r\n  border-style: dashed;\r\n  border-color: #ccc;\r\n  line-height: 400px;\r\n  text-align: center\r\n}\r\n.upload-drop-zone.drop {\r\n  color: #222;\r\n  border-color: #222;\r\n}\r\n\r\n.white {\r\n\tbackground-color: white;\r\n\tpadding-left: 1%;\r\n\t\r\n}\r\n\r\n.fixed-panel {\r\n  min-height: 1000px;\r\n  max-height: 1000px;\r\n  overflow-y: scroll;\r\n}\r\n\r\n.verticalLine {\r\n  border-left: thick solid #ff0000;\r\n}", ""]);
+exports.push([module.i, "/* Set height of the grid so .sidenav can be 100% (adjust if needed) */\r\n.row.content {\r\n\theight: 1500px;\r\n}\r\n\r\n/* Set gray background color and 100% height */\r\n.sidenav {\r\n\tbackground-color: #f1f1f1;\r\n\theight: 100%;\r\n\tpadding-left: 5%;\r\n\tpadding-top: 1%;\r\n}\r\n\r\n/* Set black background color, white text and some padding */\r\nfooter {\r\n\tbackground-color: #555;\r\n\tcolor: white;\r\n\tpadding: 15px;\r\n}\r\n\r\n/* On small screens, set height to 'auto' for sidenav and grid */\r\n@media screen and (max-width: 767px) {\r\n\t.sidenav {\r\n\t\theight: auto;\r\n\t\tpadding: 15px;\r\n\t}\r\n\t.row.content {\r\n\t\theight: auto;\r\n\t}\r\n}\r\n\r\n.btn-sq-lg {\r\n  width:65px !important;\r\n  height:65px !important;\r\n}\r\n\r\n.btn-sq-sm {\r\n  width:32px !important;\r\n  height:32px !important;\r\n}\r\n\r\n/* layout.css Style */\r\n.upload-drop-zone {\r\n  height: 30%;\r\n  width: 100%;\r\n  border-width: 2px;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n/* skin.css Style*/\r\n.upload-drop-zone {\r\n  color: #ccc;\r\n  border-style: dashed;\r\n  border-color: #ccc;\r\n  line-height: 400px;\r\n  text-align: center\r\n}\r\n.upload-drop-zone.drop {\r\n  color: #222;\r\n  border-color: #222;\r\n}\r\n\r\n.white {\r\n\tbackground-color: white;\r\n\tpadding-left: 1%;\r\n\t\r\n}\r\n\r\n.fixed-panel {\r\n  min-height: 1000px;\r\n  max-height: 1000px;\r\n  overflow-y: scroll;\r\n}\r\n\r\n.verticalLine {\r\n  border-left: thick solid #ff0000;\r\n}\r\n\r\n.lineHeightNestedAnons {\r\n\tline-height: 165%;\r\n}", ""]);
 
 // exports
 
@@ -466,7 +466,7 @@ module.exports = module.exports.toString();
 /***/ "./src/app/control.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container-fluid\">\r\n\t<div class=\"row content\">\r\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\r\n\t\t\t\t(change)=\"fileHandle($event)\">\r\n\t\t</div>\r\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\r\n\t\t\t(keypress)=\"keyControl($event)\"\r\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\r\n\t\t\t<div class=\"panel panel-default\">\r\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\r\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\r\n\t\t\t\t\t<!-- *ngFor=\"let page of anonymizationHanlderService.displayableText\"-->\r\n\t\t\t\t\t<div\r\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<span>{{selectedText}}</span>\r\n\t\t</div>\r\n\t\t<div class=\"col-sm-2\">\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<a target=\"_blank\" href=\"http://localhost:7000/overview\"><button type=\"button\"\r\n\t\t\t\t\t\tclass=\"btn btn-link\">Dokumentenmanagement</button></a>&nbsp;<a target=\"_blank\"\r\n\t\t\t\t\thref=\"https://github.com/anon-ml/anonml-gui/wiki/Control\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Help</button></a>\r\n\r\n\t\t\t</div>\r\n\t\t\t<hr>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<h4>Steuerung:</h4>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div class=\"col-sm-1\"></div>\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\r\n\t\t\t\t\t\t\t<td></td>\r\n\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\r\n\t\t\t<hr>\r\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\r\n\t\t\t\t(keyup.enter)=\"enterRework()\">\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><div\r\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, \r\n\t\t\t\t\t\t\t\ttrue)\"></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\r\n\t\t\t\t\t\t\tclass=\"form-control\"><option\r\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\r\n\t\t\t\t\t\t</select></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\r\n\t\t\t\t</table>\r\n\r\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\r\n\r\n\t\t\t\t<hr>\r\n\t\t\t\t<h4>Farblegende:</h4>\r\n\t\t\t\t<ul>\r\n\t\t\t\t\t<li *ngFor=\"let label of anonymizationHanlderService.getLabels()\">\r\n\t\t\t\t\t\t<div\r\n\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(label,label,true)\"></div>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>\r\n"
+module.exports = "<div class=\"container-fluid\">\r\n\t<div class=\"row content\">\r\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\r\n\t\t\t\t(change)=\"fileHandle($event)\">\r\n\t\t</div>\r\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\r\n\t\t\t(keypress)=\"keyControl($event)\"\r\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\r\n\t\t\t<div class=\"panel panel-default\">\r\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\r\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\r\n\t\t\t\t\t<div class=\"lineHeightNestedAnons\"\r\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div class=\"col-sm-2\">\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<a target=\"_blank\" href=\"http://localhost:7000/overview\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Dokumentenmanagement</button></a>&nbsp;<a\r\n\t\t\t\t\ttarget=\"_blank\"\r\n\t\t\t\t\thref=\"https://github.com/anon-ml/anonml-gui/wiki/Control\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Help</button></a>\r\n\r\n\t\t\t</div>\r\n\t\t\t<hr>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<h4>Steuerung:</h4>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div class=\"col-sm-1\"></div>\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\r\n\t\t\t\t\t\t\t<td></td>\r\n\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\r\n\t\t\t<hr>\r\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\r\n\t\t\t\t(keyup.enter)=\"enterRework()\">\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><div\r\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, \r\n\t\t\t\t\t\t\t\ttrue)\"></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\r\n\t\t\t\t\t\t\tclass=\"form-control\"><option\r\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\r\n\t\t\t\t\t\t</select></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\r\n\t\t\t\t</table>\r\n\r\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\r\n\r\n\t\t\t\t<hr>\r\n\t\t\t\t<h4>Farblegende:</h4>\r\n\t\t\t\t<ul>\r\n\t\t\t\t\t<li *ngFor=\"let label of anonymizationHanlderService.getLabels()\">\r\n\t\t\t\t\t\t<div\r\n\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(label,label,true)\"></div>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -495,11 +495,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var ControlComponent = (function () {
-    function ControlComponent(httpService, anonymizationHanlderService, activatedRoute) {
+    function ControlComponent(httpService, anonymizationHanlderService, activatedRoute, elRef, renderer) {
         var _this = this;
         this.httpService = httpService;
         this.anonymizationHanlderService = anonymizationHanlderService;
         this.activatedRoute = activatedRoute;
+        this.elRef = elRef;
+        this.renderer = renderer;
         this.trigger = 0;
         this.focusReworkArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
         this.focusMainArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
@@ -517,6 +519,37 @@ var ControlComponent = (function () {
     }
     ControlComponent.prototype.updatePipe = function () {
         this.trigger++;
+    };
+    ControlComponent.prototype.countChildrenLayers = function (span, counter) {
+        var children = span.querySelectorAll('span');
+        if (children.length === 0) {
+            return counter;
+        }
+        else {
+            var maxCounter = 0;
+            for (var i = 0; i < children.length; ++i) {
+                maxCounter = Math.max(maxCounter, this.countChildrenLayers(children[i], counter + 1));
+            }
+            return maxCounter;
+        }
+    };
+    ControlComponent.prototype.ngAfterViewChecked = function () {
+        console.log('bigger if nested');
+        var span = this.elRef.nativeElement.querySelectorAll('span');
+        if (span.length === 0) {
+            console.log('span null ');
+            return;
+        }
+        for (var i = 0; i < span.length; ++i) {
+            var childrenCount = this.countChildrenLayers(span[i], 0);
+            if (childrenCount !== 0) {
+                this.renderer.setStyle(span[i], 'border', (2 * childrenCount) + 'px solid ' + span[i].style.backgroundColor);
+            }
+        }
+        //    this.renderer.listen(span[0], 'click', (evt) => {
+        //      console.log('First span clicked!');
+        //    });
+        //    span[0].addEventListener('click', this.onClickSpan);
     };
     /**
      * Uploads the file to the backend and sets up the needed elements from the response
@@ -668,10 +701,10 @@ ControlComponent = __decorate([
         styles: [__webpack_require__("./src/app/control.component.css")],
         providers: [__WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */], __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_core__["M" /* ElementRef */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__angular_core__["_15" /* Renderer2 */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_core__["_15" /* Renderer2 */]) === "function" && _e || Object])
 ], ControlComponent);
 
-var _a, _b, _c;
+var _a, _b, _c, _d, _e;
 //# sourceMappingURL=control.component.js.map
 
 /***/ }),
@@ -811,7 +844,7 @@ var HighlightAnonymizationPipe = (function () {
      * @return html with the originals replaced by the <span> object to highlight it
      */
     HighlightAnonymizationPipe.prototype.transform = function (value, anonymizations, trigger) {
-        console.log('Pipe highlightAnonymization entered.');
+        console.log('Pipe highlightAnonymization entered.' + trigger);
         var newValue = value;
         var replacement = '';
         for (var i = 0; i < anonymizations.length; ++i) {
