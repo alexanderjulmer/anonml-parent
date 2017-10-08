@@ -38,22 +38,65 @@ var AnonymizationHandlerService = (function () {
         var _this = this;
         this.httpService = httpService;
         this.sanitizer = sanitizer;
-        this.acceptedAnonymizations = [];
-        this.reworkedAnonymizations = [];
-        this.declinedAnonymizations = [];
-        this.addedAnonymizations = [];
         this.temporaryAnonymization = [];
         this.httpService.getLabels().then(function (labels) { return _this.allLabels = labels; });
     }
+    /**
+     * Resets the loaded document after it is saved and exported to start over with another one.
+     */
+    AnonymizationHandlerService.prototype.resetDisplayableText = function () {
+        this.anonymizations.length = 0;
+        this.displayableText = '';
+    };
+    AnonymizationHandlerService.prototype.setAnonymizations = function (anonymizations) {
+        this.anonymizations = anonymizations;
+        this.findNextAnonymization();
+    };
     AnonymizationHandlerService.prototype.getText = function () {
         return this.displayableText;
     };
     AnonymizationHandlerService.prototype.getAnonymizations = function () {
-        return this.anonymizations.concat(this.temporaryAnonymization);
+        return this.temporaryAnonymization.concat(this.anonymizations.concat());
     };
-    AnonymizationHandlerService.prototype.getAllTouchedAnonymizations = function () {
-        return this.acceptedAnonymizations.concat(this.reworkedAnonymizations, this.addedAnonymizations);
+    AnonymizationHandlerService.prototype.findAnonymizationById = function (id) {
+        for (var i = 0; i < this.anonymizations.length; ++i) {
+            if (id === this.anonymizations[i].id) {
+                return i;
+            }
+        }
+        return -1;
     };
+    AnonymizationHandlerService.prototype.reActivateAnonymization = function (id) {
+        var index = this.findAnonymizationById(id);
+        console.log('found index: ' + index);
+        if (this.anonymizations[index].status !== 'PROCESSING') {
+            var anonymization = this.anonymizations[index].status = 'PROCESSING';
+            this.actuallyReworking = this.anonymizations[index];
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    /**
+     * Finds all of the processed anonymizations which are labeled with the given status.
+     * @param status labeled status to search for
+     * @return list with id's which have the given status
+     */
+    AnonymizationHandlerService.prototype.findAnonymizationsByStatus = function (status) {
+        var foundAnonymizations = [];
+        var allAnonymizations = this.getAnonymizations();
+        for (var i = 0; i < allAnonymizations.length; ++i) {
+            if (allAnonymizations[i].status === status) {
+                foundAnonymizations.push(allAnonymizations[i].id);
+            }
+        }
+        return foundAnonymizations;
+    };
+    /**
+     * Sets a given anonymization as actually reworking to be able to rework an newly added one.
+     * @param actual given anonymization to set as actuallyReworking
+     */
     AnonymizationHandlerService.prototype.setActualleReworking = function (actual) {
         this.actuallyReworking = actual;
     };
@@ -63,6 +106,13 @@ var AnonymizationHandlerService = (function () {
     AnonymizationHandlerService.prototype.getLabels = function () {
         return this.allLabels;
     };
+    /**
+     * Generates a <span> element with different background colors based on the index of the given label
+     * @param label one of the loaded labels (e.g. Person, Organization) which the color bases on
+     * @param original the word(-sequence) which is placed in the <span>
+     * @param asHTML directly sanitize as HTML or not
+     * @return a string or a HTML based on the asHTML parameter
+     */
     AnonymizationHandlerService.prototype.generateColorForLabel = function (label, original, asHTML) {
         var replacement = '';
         var indexOfLabel = this.allLabels.indexOf(label);
@@ -70,8 +120,49 @@ var AnonymizationHandlerService = (function () {
             replacement += '<span style="background-color:rgb( 255 , 255, 255)">' + original + '</span>';
         }
         else {
-            replacement += '<span style="background-color:rgb( 0 , ' + (255 - (indexOfLabel * 25) % 255) + ', '
-                + ((indexOfLabel * 25) % 255) + ')">' + original + '</span>';
+            replacement += '<span style="background-color:';
+            switch (indexOfLabel) {
+                case 0:
+                    replacement += 'rgb(60, 180, 75)';
+                    break;
+                case 1:
+                    replacement += 'rgb(255, 225, 25)';
+                    break;
+                case 2:
+                    replacement += 'rgb(0, 130, 200)';
+                    break;
+                case 3:
+                    replacement += 'rgb(245, 130, 48)';
+                    break;
+                case 4:
+                    replacement += 'rgb(250, 190, 190)';
+                    break;
+                case 5:
+                    replacement += 'rgb(230, 190, 255)';
+                    break;
+                case 6:
+                    replacement += 'rgb(255, 250, 200)';
+                    break;
+                case 7:
+                    replacement += 'rgb(170, 255, 195)';
+                    break;
+                case 8:
+                    replacement += 'rgb(128, 128, 0) ';
+                    break;
+                case 9:
+                    replacement += 'rgb(210, 245, 60)';
+                    break;
+                case 10:
+                    replacement += 'rgb(0, 128, 128)';
+                    break;
+                case 11:
+                    replacement += 'rgb(240, 50, 230)';
+                    break;
+                default:
+                    replacement += 'rgb(255, 215, 180)';
+                    break;
+            }
+            replacement += '">' + original + '</span>';
         }
         if (asHTML) {
             return this.sanitizer.bypassSecurityTrustHtml(replacement);
@@ -87,6 +178,10 @@ var AnonymizationHandlerService = (function () {
         this.anonymizations = anonymizations;
         this.findNextAnonymization();
     };
+    /**
+     * Finds the maximal id of the anonymizations in the anonymization list
+     * @return the highest id of the anonymizations
+     */
     AnonymizationHandlerService.prototype.getMaxId = function () {
         var highestIndex = 0;
         var id;
@@ -98,19 +193,26 @@ var AnonymizationHandlerService = (function () {
         }
         return highestIndex;
     };
+    /**
+     * Finds the anonymization from the anonymizations list which comes next in the displayableText.
+     * Basically looks after the lowest index of the originals with pattern search. This should
+     * help to go from top to bottom through the text. When the lowest is found it is set as
+     * actuallyReworking.
+     */
     AnonymizationHandlerService.prototype.findNextAnonymization = function () {
         console.log('findNextAnonymization accessed.');
         var lowestIndex = Number.MAX_VALUE;
         var foundIndex;
         var nextAnonymization = -1;
         for (var i = 0; i < this.anonymizations.length; ++i) {
-            if (this.getAllTouchedAnonymizations().includes(this.anonymizations[i].id)) {
+            if (this.findAnonymizationsByStatus('DECLINED').concat(this.findAnonymizationsByStatus('ACCEPTED'))
+                .includes(this.anonymizations[i].id)) {
                 continue;
             }
-            var regex = this.formRegexFromOriginal(this.anonymizations[i].original);
+            var regex = this.formRegexFromOriginal(this.anonymizations[i].data.original);
             foundIndex = this.displayableText.search(new RegExp(regex));
             if (foundIndex === -1) {
-                console.log(this.anonymizations[i].original + ' not found!');
+                console.log(this.anonymizations[i].data.original + ' not found!');
                 continue;
             }
             else if (foundIndex < lowestIndex) {
@@ -123,41 +225,72 @@ var AnonymizationHandlerService = (function () {
         }
         this.actuallyReworking = this.anonymizations[nextAnonymization];
     };
+    /**
+     * Escapes all special characters contained in the original, also replaces all "\n" with <br/>
+     * to find it in the displayable text
+     * @param original the original of an anonymization to generate the regex from
+     * @return the formed regex
+     */
     AnonymizationHandlerService.prototype.formRegexFromOriginal = function (original) {
         original = original.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-        original = original.replace(/(\s)+/g, '((\\s)+|(<br>)+)');
+        original = original.replace(/\n/g, '<br/>');
         return original;
     };
+    AnonymizationHandlerService.prototype.notFindOriginal = function (original) {
+        var notFindable = '';
+        for (var i = 0; i < original.length; ++i) {
+            notFindable += original[i];
+            notFindable += '&zwnj;';
+        }
+        return notFindable;
+    };
+    /**
+     * Pushes the accepted anonymization to the accepted list and
+     * searches the next one in the text (called if 'a' is pressed)
+     */
     AnonymizationHandlerService.prototype.acceptedActualAnonymization = function () {
         console.log('Accepted!');
         if (this.actuallyReworking == null) {
             console.log('Document finished!');
             return;
         }
-        this.acceptedAnonymizations.push(this.actuallyReworking.id);
+        this.actuallyReworking.status = 'ACCEPTED';
         this.findNextAnonymization();
     };
+    /**
+     * Pushes the declined anonymization to the declined list, removes it from
+     * the anonymization list and searches the next one in the text
+     * (called if 'd' is pressed)
+     */
     AnonymizationHandlerService.prototype.declineActualAnonymization = function () {
         if (this.actuallyReworking == null) {
             console.log('Document finished!');
             return;
         }
         var index = this.anonymizations.indexOf(this.actuallyReworking);
-        this.declinedAnonymizations.push(this.actuallyReworking.id);
-        this.anonymizations.splice(index, 1);
+        this.actuallyReworking.status = 'DECLINED';
         this.findNextAnonymization();
     };
+    /**
+     * Pushes the actual anonymization to the reworked list and searches the next.
+     * (called if 'enter' is pressed after going to the rework zone)
+     */
     AnonymizationHandlerService.prototype.reworkedActualAnonymization = function () {
         if (this.actuallyReworking == null) {
             console.log('Document finished!');
             return;
         }
-        this.reworkedAnonymizations.push(this.actuallyReworking.id);
+        this.actuallyReworking.status = 'ACCEPTED';
         this.findNextAnonymization();
     };
+    /**
+     * Adds the newly added anonymization to the anonymization list and searches the next.
+     * (called if 'enter' is pressed after going to the rework zone and
+     * the actually reworking has a id which is the highst + 1)
+     */
     AnonymizationHandlerService.prototype.addedNewAnonymization = function () {
+        this.actuallyReworking.status = 'ACCEPTED';
         this.anonymizations.push(this.actuallyReworking);
-        this.addedAnonymizations.push(this.actuallyReworking.id);
         this.findNextAnonymization();
         this.temporaryAnonymization.length = 0;
     };
@@ -177,9 +310,12 @@ var _a, _b;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__replacement__ = __webpack_require__("./src/app/replacement.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Anonymization; });
+
 var Anonymization = (function () {
     function Anonymization() {
+        this.data = new __WEBPACK_IMPORTED_MODULE_0__replacement__["a" /* Replacement */]();
     }
     return Anonymization;
 }());
@@ -196,7 +332,7 @@ exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/cs
 
 
 // module
-exports.push([module.i, "/* Set height of the grid so .sidenav can be 100% (adjust if needed) */\r\n.row.content {\r\n\theight: 1500px;\r\n}\r\n\r\n/* Set gray background color and 100% height */\r\n.sidenav {\r\n\tbackground-color: #f1f1f1;\r\n\theight: 100%;\r\n\tpadding-left: 5%;\r\n\tpadding-top: 1%;\r\n}\r\n\r\n/* Set black background color, white text and some padding */\r\nfooter {\r\n\tbackground-color: #555;\r\n\tcolor: white;\r\n\tpadding: 15px;\r\n}\r\n\r\n/* On small screens, set height to 'auto' for sidenav and grid */\r\n@media screen and (max-width: 767px) {\r\n\t.sidenav {\r\n\t\theight: auto;\r\n\t\tpadding: 15px;\r\n\t}\r\n\t.row.content {\r\n\t\theight: auto;\r\n\t}\r\n}\r\n\r\n.btn-sq-lg {\r\n  width:65px !important;\r\n  height:65px !important;\r\n}\r\n\r\n.btn-sq-sm {\r\n  width:32px !important;\r\n  height:32px !important;\r\n}\r\n\r\n/* layout.css Style */\r\n.upload-drop-zone {\r\n  height: 30%;\r\n  width: 100%;\r\n  border-width: 2px;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n/* skin.css Style*/\r\n.upload-drop-zone {\r\n  color: #ccc;\r\n  border-style: dashed;\r\n  border-color: #ccc;\r\n  line-height: 400px;\r\n  text-align: center\r\n}\r\n.upload-drop-zone.drop {\r\n  color: #222;\r\n  border-color: #222;\r\n}\r\n\r\n.white {\r\n\tbackground-color: white;\r\n\tpadding-left: 1%;\r\n\t\r\n}\r\n\r\n.fixed-panel {\r\n  min-height: 1000px;\r\n  max-height: 1000px;\r\n  overflow-y: scroll;\r\n}", ""]);
+exports.push([module.i, "", ""]);
 
 // exports
 
@@ -209,7 +345,7 @@ module.exports = module.exports.toString();
 /***/ "./src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container-fluid\">\n\t<div class=\"row content\">\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\n\t\t\t\t(change)=\"fileHandle($event)\">\n\t\t</div>\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\n\t\t\t(keypress)=\"keyControl($event)\"\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\n\t\t\tclass=\"col-sm-10 sidenav\">\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\n\t\t\t<div class=\"panel panel-default\">\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\n\t\t\t\t\t<!-- *ngFor=\"let page of anonymizationHanlderService.displayableText\"-->\n\t\t\t\t\t<div\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<span>{{selectedText}}</span>\n\t\t</div>\n\t\t<div class=\"col-sm-2\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<h4>Steuerung:</h4>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"col-sm-1\"></div>\n\t\t\t\t<div class=\"col-sm-5\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\n\t\t\t\t\t\t\t<td></td>\n\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\n\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t<h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\n\t\t\t\t\t\t\t\t</h4>\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td><button type=\"button\"\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\n\t\t\t\t\t\t\t<td><h4>\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\n\t\t\t\t\t\t\t\t</h4></td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<hr>\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\n\t\t\t\t(keyup.enter)=\"enterRework()\">\n\t\t\t\t<table>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\n\t\t\t\t\t</tr>\n\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><div\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().label, \n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().original, \n\t\t\t\t\t\t\t\ttrue)\"></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().label\"\n\t\t\t\t\t\t\tclass=\"form-control\"><option\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\n\t\t\t\t\t\t</select></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().replacement\"></td>\n\t\t\t\t\t</tr>\n\n\n\t\t\t\t</table>\n\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\n\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>"
+module.exports = "<router-outlet></router-outlet>"
 
 /***/ }),
 
@@ -217,10 +353,7 @@ module.exports = "<div class=\"container-fluid\">\n\t<div class=\"row content\">
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__anonymization__ = __webpack_require__("./src/app/anonymization.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__ = __webpack_require__("./src/app/anonymization-handler.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__http_service__ = __webpack_require__("./src/app/http.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -228,115 +361,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
 
 var AppComponent = (function () {
-    function AppComponent(httpService, anonymizationHanlderService) {
-        this.httpService = httpService;
-        this.anonymizationHanlderService = anonymizationHanlderService;
+    function AppComponent() {
         this.title = 'AnonML';
-        this.trigger = 0;
-        this.focusReworkArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
-        this.focusMainArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
-        this.focusMainArea.emit(true);
     }
-    AppComponent.prototype.updatePipe = function () {
-        this.trigger++;
-    };
-    AppComponent.prototype.fileHandle = function (event) {
-        var _this = this;
-        var files = event.target.files || event.srcElement.files;
-        console.log(files);
-        this.httpService.postFile(files).then(function (response) {
-            _this.fileName = response.fileName;
-            _this.docId = response.id;
-            _this.docFileType = response.originalFileType;
-            for (var i = 0; i < response.anonymizations.length; ++i) {
-                response.anonymizations[i].id = i + 1;
-            }
-            _this.anonymizationHanlderService.setUpParams(response.displayableText, response.anonymizations);
-        });
-    };
-    AppComponent.prototype.keyControl = function (event) {
-        switch (event.charCode) {
-            case 97:
-                console.log('pressed a');
-                this.anonymizationHanlderService.acceptedActualAnonymization();
-                this.updatePipe();
-                break;
-            case 119:
-                console.log('pressed w');
-                this.focusReworkArea.emit(true);
-                break;
-            case 100:
-                console.log('pressed d');
-                this.anonymizationHanlderService.declineActualAnonymization();
-                this.updatePipe();
-                break;
-            case 115:
-                console.log('pressed s');
-                if (this.anonymizationHanlderService.getActuallyReworking() === undefined) {
-                    this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId);
-                }
-                else {
-                    console.log('Document not finished!');
-                }
-                break;
-            default:
-        }
-    };
-    AppComponent.prototype.enterRework = function () {
-        console.log('Hit Enter!');
-        this.focusMainArea.emit(true);
-        if (this.anonymizationHanlderService.getActuallyReworking().id === (this.anonymizationHanlderService.getMaxId() + 1)) {
-            console.log('add new anonymization!');
-            this.anonymizationHanlderService.addedNewAnonymization();
-        }
-        else {
-            this.anonymizationHanlderService.reworkedActualAnonymization();
-        }
-        this.updatePipe();
-    };
-    AppComponent.prototype.getSelectionText = function () {
-        console.log('getSelectionText Entered.');
-        var t;
-        if (window.getSelection) {
-            t = window.getSelection();
-        }
-        else if (document.getSelection) {
-            t = document.getSelection();
-        }
-        // first check for wrong selections
-        if (String(t) === '' || String(t) === ' ') {
-            return;
-        }
-        this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__anonymization__["a" /* Anonymization */]();
-        this.tempAnonymization.original = t.toString();
-        this.tempAnonymization.Producer = 'HUMAN';
-        this.tempAnonymization.id = this.anonymizationHanlderService.getMaxId() + 1;
-        this.anonymizationHanlderService.setActualleReworking(this.tempAnonymization);
-        this.anonymizationHanlderService.setTemporatyAnonymization();
-        this.updatePipe();
-        this.focusReworkArea.emit(true);
-    };
     return AppComponent;
 }());
 AppComponent = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__angular_core__["_4" /* Component */])({
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* Component */])({
         selector: 'app-root',
         template: __webpack_require__("./src/app/app.component.html"),
-        styles: [__webpack_require__("./src/app/app.component.css")],
-        providers: [__WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */], __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]]
-    }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]) === "function" && _b || Object])
+        styles: [__webpack_require__("./src/app/app.component.css")]
+    })
 ], AppComponent);
 
-var _a, _b;
 //# sourceMappingURL=app.component.js.map
 
 /***/ }),
@@ -353,6 +392,8 @@ var _a, _b;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__highlight_anonymization_pipe__ = __webpack_require__("./src/app/highlight-anonymization.pipe.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__focus_rework_directive__ = __webpack_require__("./src/app/focus-rework.directive.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__focus_main_directive__ = __webpack_require__("./src/app/focus-main.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__control_component__ = __webpack_require__("./src/app/control.component.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -368,6 +409,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
+
+
+var appRoutes = [
+    { path: '', component: __WEBPACK_IMPORTED_MODULE_9__control_component__["a" /* ControlComponent */] },
+    { path: 'document/:id', component: __WEBPACK_IMPORTED_MODULE_9__control_component__["a" /* ControlComponent */] },
+    { path: '**', redirectTo: '' }
+];
 var AppModule = (function () {
     function AppModule() {
     }
@@ -379,9 +427,11 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */],
             __WEBPACK_IMPORTED_MODULE_5__highlight_anonymization_pipe__["a" /* HighlightAnonymizationPipe */],
             __WEBPACK_IMPORTED_MODULE_6__focus_rework_directive__["a" /* FocusReworkDirective */],
-            __WEBPACK_IMPORTED_MODULE_7__focus_main_directive__["a" /* FocusMainDirective */]
+            __WEBPACK_IMPORTED_MODULE_7__focus_main_directive__["a" /* FocusMainDirective */],
+            __WEBPACK_IMPORTED_MODULE_9__control_component__["a" /* ControlComponent */],
         ],
         imports: [
+            __WEBPACK_IMPORTED_MODULE_8__angular_router__["a" /* RouterModule */].forRoot(appRoutes),
             __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
             __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormsModule */],
             __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* HttpModule */]
@@ -392,6 +442,270 @@ AppModule = __decorate([
 ], AppModule);
 
 //# sourceMappingURL=app.module.js.map
+
+/***/ }),
+
+/***/ "./src/app/control.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "/* Set height of the grid so .sidenav can be 100% (adjust if needed) */\r\n.row.content {\r\n\theight: 1500px;\r\n}\r\n\r\n/* Set gray background color and 100% height */\r\n.sidenav {\r\n\tbackground-color: #f1f1f1;\r\n\theight: 100%;\r\n\tpadding-left: 5%;\r\n\tpadding-top: 1%;\r\n}\r\n\r\n/* Set black background color, white text and some padding */\r\nfooter {\r\n\tbackground-color: #555;\r\n\tcolor: white;\r\n\tpadding: 15px;\r\n}\r\n\r\n/* On small screens, set height to 'auto' for sidenav and grid */\r\n@media screen and (max-width: 767px) {\r\n\t.sidenav {\r\n\t\theight: auto;\r\n\t\tpadding: 15px;\r\n\t}\r\n\t.row.content {\r\n\t\theight: auto;\r\n\t}\r\n}\r\n\r\n.btn-sq-lg {\r\n  width:65px !important;\r\n  height:65px !important;\r\n}\r\n\r\n.btn-sq-sm {\r\n  width:32px !important;\r\n  height:32px !important;\r\n}\r\n\r\n/* layout.css Style */\r\n.upload-drop-zone {\r\n  height: 30%;\r\n  width: 100%;\r\n  border-width: 2px;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n/* skin.css Style*/\r\n.upload-drop-zone {\r\n  color: #ccc;\r\n  border-style: dashed;\r\n  border-color: #ccc;\r\n  line-height: 400px;\r\n  text-align: center\r\n}\r\n.upload-drop-zone.drop {\r\n  color: #222;\r\n  border-color: #222;\r\n}\r\n\r\n.white {\r\n\tbackground-color: white;\r\n\tpadding-left: 1%;\r\n\t\r\n}\r\n\r\n.fixed-panel {\r\n  min-height: 1000px;\r\n  max-height: 1000px;\r\n  overflow-y: scroll;\r\n}\r\n\r\n.verticalLine {\r\n  border-left: thick solid #ff0000;\r\n}\r\n\r\n.lineHeightNestedAnons {\r\n\tline-height: 165%;\r\n}", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "./src/app/control.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"container-fluid\">\r\n\t<div class=\"row content\">\r\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\r\n\t\t\t\t(change)=\"fileHandle($event)\">\r\n\t\t</div>\r\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\r\n\t\t\t(keypress)=\"keyControl($event)\"\r\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\r\n\t\t\t<div class=\"panel panel-default\">\r\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\r\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\r\n\t\t\t\t\t<div class=\"lineHeightNestedAnons\"\r\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div class=\"col-sm-2\">\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<a target=\"_blank\" href=\"http://localhost:7000/overview\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Dokumentenmanagement</button></a>&nbsp;<a\r\n\t\t\t\t\ttarget=\"_blank\"\r\n\t\t\t\t\thref=\"https://github.com/anon-ml/anonml-gui/wiki/Control\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Help</button></a>\r\n\r\n\t\t\t</div>\r\n\t\t\t<hr>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<h4>Steuerung:</h4>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div class=\"col-sm-1\"></div>\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\r\n\t\t\t\t\t\t\t<td></td>\r\n\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\r\n\t\t\t<hr>\r\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\r\n\t\t\t\t(keyup.enter)=\"enterRework()\">\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><div\r\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, \r\n\t\t\t\t\t\t\t\ttrue)\"></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\r\n\t\t\t\t\t\t\tclass=\"form-control\"><option\r\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\r\n\t\t\t\t\t\t</select></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\r\n\t\t\t\t</table>\r\n\r\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\r\n\r\n\t\t\t\t<hr>\r\n\t\t\t\t<h4>Farblegende:</h4>\r\n\t\t\t\t<ul>\r\n\t\t\t\t\t<li *ngFor=\"let label of anonymizationHanlderService.getLabels()\">\r\n\t\t\t\t\t\t<div\r\n\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(label,label,true)\"></div>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>\r\n"
+
+/***/ }),
+
+/***/ "./src/app/control.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__anonymization__ = __webpack_require__("./src/app/anonymization.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__ = __webpack_require__("./src/app/anonymization-handler.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__http_service__ = __webpack_require__("./src/app/http.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ControlComponent; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+var ControlComponent = (function () {
+    function ControlComponent(httpService, anonymizationHanlderService, activatedRoute, elRef, renderer) {
+        var _this = this;
+        this.httpService = httpService;
+        this.anonymizationHanlderService = anonymizationHanlderService;
+        this.activatedRoute = activatedRoute;
+        this.elRef = elRef;
+        this.renderer = renderer;
+        this.trigger = 0;
+        this.focusReworkArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
+        this.focusMainArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
+        activatedRoute.params.subscribe(function (param) { return _this.param = param.id; });
+        console.log(this.param);
+        if (this.param === undefined || this.param === '') {
+            console.log('no param found.');
+        }
+        else {
+            this.httpService.getDocument(this.param).then(function (response) {
+                return _this.setUpFromDocument(response);
+            });
+        }
+        this.focusMainArea.emit(true);
+    }
+    ControlComponent.prototype.updatePipe = function () {
+        this.trigger++;
+    };
+    ControlComponent.prototype.countChildrenLayers = function (span, counter) {
+        var children = span.querySelectorAll('span');
+        if (children.length === 0) {
+            return counter;
+        }
+        else {
+            var maxCounter = 0;
+            for (var i = 0; i < children.length; ++i) {
+                maxCounter = Math.max(maxCounter, this.countChildrenLayers(children[i], counter + 1));
+            }
+            return maxCounter;
+        }
+    };
+    ControlComponent.prototype.ngAfterViewChecked = function () {
+        console.log('bigger if nested');
+        var span = this.elRef.nativeElement.querySelectorAll('span');
+        if (span.length === 0) {
+            console.log('span null ');
+            return;
+        }
+        for (var i = 0; i < span.length; ++i) {
+            var childrenCount = this.countChildrenLayers(span[i], 0);
+            if (childrenCount !== 0) {
+                this.renderer.setStyle(span[i], 'border', (2 * childrenCount) + 'px solid ' + span[i].style.backgroundColor);
+            }
+        }
+        //    this.renderer.listen(span[0], 'click', (evt) => {
+        //      console.log('First span clicked!');
+        //    });
+        //    span[0].addEventListener('click', this.onClickSpan);
+    };
+    /**
+     * Uploads the file to the backend and sets up the needed elements from the response
+     * @param event contains the uploaded files
+     */
+    ControlComponent.prototype.fileHandle = function (event) {
+        var _this = this;
+        var files = event.target.files || event.srcElement.files;
+        console.log(files);
+        this.httpService.postFile(files).then(function (response) {
+            return _this.setUpFromDocument(response);
+        });
+    };
+    ControlComponent.prototype.setUpFromDocument = function (document) {
+        this.fileName = document.fileName;
+        this.docId = document.id;
+        this.version = document.version;
+        this.docFileType = document.originalFileType;
+        for (var i = 0; i < document.anonymizations.length; ++i) {
+            document.anonymizations[i].id = i + 1;
+        }
+        this.anonymizationHanlderService.setUpParams(document.displayableText, document.anonymizations);
+    };
+    /**
+     * Handles the operations on keypress (like a for accept)
+     * @param event the catched keyboard event to check which key is pressed
+     */
+    ControlComponent.prototype.keyControl = function (event) {
+        switch (event.charCode) {
+            case 97:
+                console.log('pressed a');
+                this.anonymizationHanlderService.acceptedActualAnonymization();
+                this.updatePipe();
+                this.save();
+                break;
+            case 119:
+                console.log('pressed w');
+                this.focusReworkArea.emit(true);
+                break;
+            case 100:
+                console.log('pressed d');
+                this.anonymizationHanlderService.declineActualAnonymization();
+                this.updatePipe();
+                this.save();
+                break;
+            case 115:
+                console.log('pressed s');
+                if (this.anonymizationHanlderService.getActuallyReworking() === undefined) {
+                    if (window.confirm('Wirklich fertig?')) {
+                        this.httpService.exportFile(this.docId);
+                        this.anonymizationHanlderService.resetDisplayableText();
+                    }
+                }
+                else {
+                    window.alert('Es sind noch offene Anonymisierungen vorhanden!');
+                    console.log('Document not finished!');
+                }
+                break;
+            default:
+        }
+    };
+    ControlComponent.prototype.save = function () {
+        var _this = this;
+        this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId, this.version)
+            .then(function (response) {
+            if (response.version === -1) {
+                if (window.confirm('Das Dokument ist nicht mehr aktuell!\nNeuen Stand laden?')) {
+                    _this.httpService.getDocument(_this.docId).then(function (response2) { return _this.setUpFromDocument(response2); });
+                }
+                else {
+                    window.alert('Weitere Aenderungen werden nicht gespeichert!');
+                }
+            }
+            else {
+                _this.setUpFromDocument(response);
+                _this.updatePipe();
+            }
+            _this.httpService.unlockExport(_this.docId);
+        });
+    };
+    /**
+     * Sets the focus back to the main area if 'enter' was pressed in the rework area.
+     * In addition calls the necessary handler function for the reworked or added anonymization.
+     */
+    ControlComponent.prototype.enterRework = function () {
+        console.log('Hit Enter!');
+        this.focusMainArea.emit(true);
+        if (this.anonymizationHanlderService.getActuallyReworking().id === (this.anonymizationHanlderService.getMaxId() + 1)) {
+            console.log('add new anonymization!');
+            this.anonymizationHanlderService.addedNewAnonymization();
+        }
+        else {
+            this.anonymizationHanlderService.reworkedActualAnonymization();
+        }
+        this.save();
+    };
+    ControlComponent.prototype.findIdOfSelectedSpan = function (selectedText) {
+        var spanTags = document.getElementsByTagName('span');
+        var foundId = -1;
+        for (var i = 0; i < spanTags.length; i++) {
+            if (spanTags[i].textContent === selectedText.toString()) {
+                foundId = +spanTags[i].id;
+                break;
+            }
+        }
+        return foundId;
+    };
+    /**
+     * Sets up a new anonymization with HUMAN as producer if something of the text
+     * is selected.
+     */
+    ControlComponent.prototype.getSelectionText = function () {
+        console.log('getSelectionText Entered.');
+        var selectedText;
+        if (window.getSelection) {
+            selectedText = window.getSelection();
+        }
+        else if (document.getSelection) {
+            selectedText = document.getSelection();
+        }
+        var id = this.findIdOfSelectedSpan(selectedText);
+        if (id !== -1 && id !== 0) {
+            if (this.anonymizationHanlderService.reActivateAnonymization(id)) {
+                return;
+            }
+        }
+        // first check for wrong selections
+        if (String(selectedText) === '' || String(selectedText) === ' ') {
+            return;
+        }
+        this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__anonymization__["a" /* Anonymization */]();
+        this.tempAnonymization.data.original = selectedText.toString();
+        this.tempAnonymization.data.label = 'UNKNOWN';
+        this.tempAnonymization.data.replacement = '';
+        this.tempAnonymization.producer = 'HUMAN';
+        this.tempAnonymization.status = 'PROCESSING';
+        this.tempAnonymization.id = this.anonymizationHanlderService.getMaxId() + 1;
+        this.anonymizationHanlderService.setActualleReworking(this.tempAnonymization);
+        this.anonymizationHanlderService.setTemporatyAnonymization();
+        this.updatePipe();
+        this.focusReworkArea.emit(true);
+    };
+    return ControlComponent;
+}());
+ControlComponent = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__angular_core__["_14" /* Component */])({
+        selector: 'app-control',
+        template: __webpack_require__("./src/app/control.component.html"),
+        styles: [__webpack_require__("./src/app/control.component.css")],
+        providers: [__WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */], __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]]
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_core__["M" /* ElementRef */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__angular_core__["_15" /* Renderer2 */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_core__["_15" /* Renderer2 */]) === "function" && _e || Object])
+], ControlComponent);
+
+var _a, _b, _c, _d, _e;
+//# sourceMappingURL=control.component.js.map
 
 /***/ }),
 
@@ -518,24 +832,42 @@ var HighlightAnonymizationPipe = (function () {
         this.anonymizationHanlderService = anonymizationHanlderService;
         this.sanitizer = sanitizer;
     }
+    /**
+     * Finds the originals of the anonymizations from the list (with regex) and replaces them in the
+     * displayable text by a <span> element to set a background color according to the Label of the
+     * anonymization. If the anonymization is the next one then there
+     * are added red marks before and after to mark the actually looked at.
+     *
+     * @param value is the text which is actually piped in the view
+     * @param anonymizations is the list of anonymizations which should be highlighted
+     * @param trigger a number which is incremented to trigger the pipe function
+     * @return html with the originals replaced by the <span> object to highlight it
+     */
     HighlightAnonymizationPipe.prototype.transform = function (value, anonymizations, trigger) {
-        console.log('Pipe highlightAnonymization entered.');
+        console.log('Pipe highlightAnonymization entered.' + trigger);
         var newValue = value;
         var replacement = '';
         for (var i = 0; i < anonymizations.length; ++i) {
             replacement = '';
-            if (this.anonymizationHanlderService.getAllTouchedAnonymizations().includes(anonymizations[i].id)) {
-                replacement = '<span style="background-color:DarkGrey">' + anonymizations[i].replacement + '</span>';
+            if (this.anonymizationHanlderService.findAnonymizationsByStatus('ACCEPTED').includes(anonymizations[i].id)) {
+                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:DarkGrey" data-toggle="tooltip" title="'
+                    + this.anonymizationHanlderService.notFindOriginal(anonymizations[i].data.original) + '">'
+                    + anonymizations[i].data.replacement + '</span>';
+            }
+            else if (this.anonymizationHanlderService.findAnonymizationsByStatus('DECLINED').includes(anonymizations[i].id)) {
+                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:rgb(150, 200, 255, 0.1)">'
+                    + anonymizations[i].data.original.replace(/\n/g, '<br/>') + '</span>';
             }
             else {
                 if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
-                    replacement = '<span style="background-color:rgb(255,0,0)">[]</span>';
+                    replacement = '<span style="background-color:rgb(255,0,0)">O</span>';
                 }
-                //        console.log('Label: ' + anonymizations[i].label);
-                replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].label, anonymizations[i].original, false);
+                replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].data.label, anonymizations[i].data.original.replace(/\n/g, '<br/>'), false);
+                if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
+                    replacement += '<span style="background-color:rgb(255,0,0)">O</span>';
+                }
             }
-            //      console.log('Replacement: ' + replacement)
-            newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].original), 'g'), replacement);
+            newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g'), replacement);
         }
         return this.sanitizer.bypassSecurityTrustHtml(newValue);
     };
@@ -577,17 +909,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var HttpService = (function () {
     function HttpService(http) {
         this.http = http;
+        this.exportAccessed = false;
+        this.lockedExport = false;
         this.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]({});
         this.options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* RequestOptions */]();
     }
+    /**
+     * Loads all labels from the backend to have the actual ones
+     * @return Promise<string[]> a promise containing a list of strings (label names)
+     */
     HttpService.prototype.getLabels = function () {
         var url = '/api/labels';
         return this.http.get(url).toPromise().then(function (response) { return response.json(); }).catch(this.handleError);
     };
+    /**
+   * Loads all labels from the backend to have the actual ones
+   * @return Promise<string[]> a promise containing a list of strings (label names)
+   */
+    HttpService.prototype.getDocument = function (id) {
+        var url = '/api/document/' + id;
+        return this.http.get(url).toPromise().then(function (response) { return response.json(); }).catch(this.handleError);
+    };
+    /**
+     * Sends the uploaded file as formData and get back the processed file as document object to display it
+     * @param files the actually uploaded file/s
+     * @return Promise<Document> a promise containing the processed file as Document object
+     */
     HttpService.prototype.postFile = function (files) {
         var url = '/api/upload';
         var formData = new FormData();
-        this.options.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */](); // 'Content-Type': 'multipart/form-data'
+        this.options.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
         for (var i = 0; i < files.length; i++) {
             formData.append('file', files[i]);
         }
@@ -595,13 +946,34 @@ var HttpService = (function () {
             .toPromise().then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
-    HttpService.prototype.saveFile = function (anonymizations, id) {
-        var url = '/api/update/anonymizations/' + id;
+    HttpService.prototype.unlockExport = function (docId) {
+        this.lockedExport = false;
+        if (this.exportAccessed) {
+            this.exportFile(docId);
+        }
+    };
+    /**
+     * Sends the manually reworked anonymizations to the backend to update the document.
+     * Additionally calls the api path for the export of the anonymized document.
+     * @param anonymizations a list of updated and added anonymizations
+     * @param id of the document in progress
+     */
+    HttpService.prototype.saveFile = function (anonymizations, id, version) {
+        this.lockedExport = true;
+        var url = '/api/update/anonymizations/' + id + '/' + version;
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
         headers.append('Content-Type', 'application/json');
-        this.http.post(url, JSON.stringify(anonymizations), { headers: headers })
-            .toPromise().then(function (Response) { window.location.replace('api/save/' + id); })
+        return this.http.post(url, JSON.stringify(anonymizations), { headers: headers })
+            .toPromise().then(function (response) { return response.json(); })
             .catch(this.handleError);
+    };
+    HttpService.prototype.exportFile = function (id) {
+        if (this.lockedExport) {
+            this.exportAccessed = true;
+            return;
+        }
+        window.location.replace('api/save/' + id);
+        this.exportAccessed = false;
     };
     HttpService.prototype.handleError = function (error) {
         console.error('An error occurred', error); // for demo purposes only
@@ -616,6 +988,21 @@ HttpService = __decorate([
 
 var _a;
 //# sourceMappingURL=http.service.js.map
+
+/***/ }),
+
+/***/ "./src/app/replacement.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Replacement; });
+var Replacement = (function () {
+    function Replacement() {
+    }
+    return Replacement;
+}());
+
+//# sourceMappingURL=replacement.js.map
 
 /***/ }),
 
