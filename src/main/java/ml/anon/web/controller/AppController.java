@@ -51,7 +51,7 @@ public class AppController {
     private RestTemplate restTemplate = new RestTemplate();
 
 
-    @RequestMapping(value = {"./", "./document/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/document/{id}"}, method = RequestMethod.GET)
     public String index() {
         log.info("Index page accessed");
         return "forward:/index.html";
@@ -68,7 +68,6 @@ public class AppController {
         log.info("admin accessed");
         return new ModelAndView("redirect:" + adminUrl + "/admin");
     }
-
 
     @RequestMapping(value = "/api/document/{id}", method = RequestMethod.GET)
     public ResponseEntity<Document> loadDocument(@PathVariable("id") String id) {
