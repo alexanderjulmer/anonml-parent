@@ -11,16 +11,12 @@ import javax.annotation.Resource;
 import ml.anon.documentmanagement.model.DocumentState;
 import ml.anon.documentmanagement.model.FileType;
 import okhttp3.*;
+import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +25,7 @@ import ml.anon.anonymization.model.Anonymization;
 import ml.anon.anonymization.model.Label;
 import ml.anon.documentmanagement.model.Document;
 import ml.anon.documentmanagement.resource.DocumentResource;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,6 +42,8 @@ public class AppController {
     private String rulebasedUrl;
     @Value("${machinelearning.service.url}")
     private String machinelearningUrl;
+    @Value("${admin.service.url}")
+    private String adminUrl;
 
     @Resource
     private DocumentResource documentResource;
@@ -52,11 +51,24 @@ public class AppController {
     private RestTemplate restTemplate = new RestTemplate();
 
 
-    @RequestMapping(value = {"/", "/document/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"./", "./document/{id}"}, method = RequestMethod.GET)
     public String index() {
         log.info("Index page accessed");
         return "forward:/index.html";
     }
+
+    @RequestMapping(value = {"/overview"}, method = RequestMethod.GET)
+    public ModelAndView adminOverview() {
+        log.info("overview accessed");
+        return new ModelAndView("redirect:" + adminUrl + "/overview");
+    }
+
+    @RequestMapping(value = {"/admin"}, method = RequestMethod.GET)
+    public ModelAndView admin() {
+        log.info("admin accessed");
+        return new ModelAndView("redirect:" + adminUrl + "/admin");
+    }
+
 
     @RequestMapping(value = "/api/document/{id}", method = RequestMethod.GET)
     public ResponseEntity<Document> loadDocument(@PathVariable("id") String id) {
