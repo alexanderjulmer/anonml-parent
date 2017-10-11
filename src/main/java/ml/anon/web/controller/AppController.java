@@ -24,7 +24,7 @@ import ml.anon.anonymization.model.Anonymization;
 import ml.anon.anonymization.model.Label;
 import ml.anon.documentmanagement.model.Document;
 import ml.anon.documentmanagement.resource.DocumentResource;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,6 +43,11 @@ public class AppController {
     private String machinelearningUrl;
     @Value("${admin.service.url}")
     private String adminUrl;
+    @Value("${server.contextPath}")
+    private String serverContextPath;
+
+
+    private String documentIndex = "";
 
     @Resource
     private DocumentResource documentResource;
@@ -50,27 +55,59 @@ public class AppController {
     private RestTemplate restTemplate = new RestTemplate();
 
 
-    @RequestMapping(value = {"/", "/document/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/"}, method = RequestMethod.GET)
     public String index() {
-        log.info("Index page accessed");
+        log.info("Index page accessed ");
         return "forward:/index.html";
     }
 
+    @RequestMapping(value = {"/document/{id}"}, method = RequestMethod.GET)
+    public RedirectView setDocumentIndex(@PathVariable("id") String id) {
+        log.info("Set id: " + id);
+        if(id.equals("reset")){
+            this.documentIndex = "";
+        } else {
+            this.documentIndex = id;
+        }
+        return new RedirectView(serverContextPath);
+    }
+
+    @RequestMapping(value = {"api/reset/id"}, method = RequestMethod.GET)
+    public void resetDocumentId() {
+        log.info("Reset id");
+        this.documentIndex = "";
+    }
+
+    @RequestMapping(value = {"/api/get/document"}, method = RequestMethod.GET)
+    public ResponseEntity<Document> getDocument() {
+        log.info("Get id");
+        if(this.documentIndex.equals("")){
+            return ResponseEntity.ok(null);
+        }
+        Document document = documentResource.findById(this.documentIndex);
+        if (document.getState() == DocumentState.UPLOADED) {
+            log.info("Analyzing document" + this.documentIndex);
+            document = analyzeDoc(document);
+        }
+        return ResponseEntity.ok(document);
+    }
+
     @RequestMapping(value = {"/overview"}, method = RequestMethod.GET)
-    public ModelAndView adminOverview() {
+    public RedirectView adminOverview() {
         log.info("overview accessed");
-        return new ModelAndView("redirect:" + adminUrl + "/overview");
+
+        return new RedirectView(adminUrl + "/overview");
     }
 
     @RequestMapping(value = {"/admin"}, method = RequestMethod.GET)
-    public ModelAndView admin() {
+    public RedirectView admin() {
         log.info("admin accessed");
-        return new ModelAndView("redirect:" + adminUrl + "/admin");
+        return new RedirectView(adminUrl + "/admin");
     }
 
     @RequestMapping(value = "/api/document/{id}", method = RequestMethod.GET)
     public ResponseEntity<Document> loadDocument(@PathVariable("id") String id) {
-        log.info("Pre load document!");
+        log.info("Reload document!");
         Document document = documentResource.findById(id);
         if (document.getState() == DocumentState.UPLOADED) {
             log.info("Analyzing document" + id);
