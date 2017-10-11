@@ -13,11 +13,645 @@ webpackEmptyContext.id = "./src async recursive";
 
 /***/ }),
 
-/***/ "./src/app/anonymization-handler.service.ts":
+/***/ "./src/app/app.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "./src/app/app.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<router-outlet></router-outlet>"
+
+/***/ }),
+
+/***/ "./src/app/app.component.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__http_service__ = __webpack_require__("./src/app/http.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var AppComponent = (function () {
+    function AppComponent() {
+        this.title = 'AnonML';
+    }
+    return AppComponent;
+}());
+AppComponent = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* Component */])({
+        selector: 'app-root',
+        template: __webpack_require__("./src/app/app.component.html"),
+        styles: [__webpack_require__("./src/app/app.component.css")]
+    })
+], AppComponent);
+
+//# sourceMappingURL=app.component.js.map
+
+/***/ }),
+
+/***/ "./src/app/app.module.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__("./node_modules/@angular/platform-browser/@angular/platform-browser.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__("./node_modules/@angular/forms/@angular/forms.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__("./node_modules/@angular/http/@angular/http.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__("./src/app/app.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__highlight_anonymization_pipe__ = __webpack_require__("./src/app/highlight-anonymization.pipe.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__directives_focus_rework_directive__ = __webpack_require__("./src/app/directives/focus-rework.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__directives_focus_main_directive__ = __webpack_require__("./src/app/directives/focus-main.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__control_control_component__ = __webpack_require__("./src/app/control/control.component.ts");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+
+
+
+
+
+var appRoutes = [
+    { path: '', component: __WEBPACK_IMPORTED_MODULE_9__control_control_component__["a" /* ControlComponent */] },
+    { path: '**', redirectTo: '' }
+];
+var AppModule = (function () {
+    function AppModule() {
+    }
+    return AppModule;
+}());
+AppModule = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_core__["b" /* NgModule */])({
+        declarations: [
+            __WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */],
+            __WEBPACK_IMPORTED_MODULE_5__highlight_anonymization_pipe__["a" /* HighlightAnonymizationPipe */],
+            __WEBPACK_IMPORTED_MODULE_6__directives_focus_rework_directive__["a" /* FocusReworkDirective */],
+            __WEBPACK_IMPORTED_MODULE_7__directives_focus_main_directive__["a" /* FocusMainDirective */],
+            __WEBPACK_IMPORTED_MODULE_9__control_control_component__["a" /* ControlComponent */]
+        ],
+        imports: [
+            __WEBPACK_IMPORTED_MODULE_8__angular_router__["a" /* RouterModule */].forRoot(appRoutes),
+            __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
+            __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormsModule */],
+            __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* HttpModule */]
+        ],
+        providers: [],
+        bootstrap: [__WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */]]
+    })
+], AppModule);
+
+//# sourceMappingURL=app.module.js.map
+
+/***/ }),
+
+/***/ "./src/app/control/control.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "/* Set height of the grid so .sidenav can be 100% (adjust if needed) */\r\n.row.content {\r\n\theight: 1500px;\r\n}\r\n\r\n/* Set gray background color and 100% height */\r\n.sidenav {\r\n\tbackground-color: #f1f1f1;\r\n\theight: 100%;\r\n\tpadding-left: 5%;\r\n\tpadding-top: 1%;\r\n}\r\n\r\n/* Set black background color, white text and some padding */\r\nfooter {\r\n\tbackground-color: #555;\r\n\tcolor: white;\r\n\tpadding: 15px;\r\n}\r\n\r\n/* On small screens, set height to 'auto' for sidenav and grid */\r\n@media screen and (max-width: 767px) {\r\n\t.sidenav {\r\n\t\theight: auto;\r\n\t\tpadding: 15px;\r\n\t}\r\n\t.row.content {\r\n\t\theight: auto;\r\n\t}\r\n}\r\n\r\n.btn-sq-lg {\r\n  width:65px !important;\r\n  height:65px !important;\r\n}\r\n\r\n.btn-sq-sm {\r\n  width:32px !important;\r\n  height:32px !important;\r\n}\r\n\r\n/* layout.css Style */\r\n.upload-drop-zone {\r\n  height: 30%;\r\n  width: 100%;\r\n  border-width: 2px;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n/* skin.css Style*/\r\n.upload-drop-zone {\r\n  color: #ccc;\r\n  border-style: dashed;\r\n  border-color: #ccc;\r\n  line-height: 400px;\r\n  text-align: center\r\n}\r\n.upload-drop-zone.drop {\r\n  color: #222;\r\n  border-color: #222;\r\n}\r\n\r\n.white {\r\n\tbackground-color: white;\r\n\tpadding-left: 1%;\r\n\t\r\n}\r\n\r\n.fixed-panel {\r\n  min-height: 1000px;\r\n  max-height: 1000px;\r\n  overflow-y: scroll;\r\n}\r\n\r\n.verticalLine {\r\n  border-left: thick solid #ff0000;\r\n}\r\n\r\n.lineHeightNestedAnons {\r\n\tline-height: 165%;\r\n}", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "./src/app/control/control.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"container-fluid\">\r\n\t<div class=\"row content\">\r\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\r\n\t\t\t\t(change)=\"fileHandle($event)\">\r\n\t\t</div>\r\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\r\n\t\t\t(keypress)=\"keyControl($event)\"\r\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\r\n\t\t\t<div class=\"panel panel-default\">\r\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\r\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\r\n\t\t\t\t\t<div class=\"lineHeightNestedAnons\"\r\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div class=\"col-sm-2\">\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<a target=\"_blank\" href=\"./overview\"><button type=\"button\"\r\n\t\t\t\t\t\tclass=\"btn btn-link\">Document management</button></a>&nbsp;<a\r\n\t\t\t\t\ttarget=\"_blank\"\r\n\t\t\t\t\thref=\"https://github.com/anon-ml/anonml-integration/wiki/GUI#control\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Help</button></a>\r\n\r\n\t\t\t</div>\r\n\t\t\t<hr>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<h4>Control:</h4>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div class=\"col-sm-1\"></div>\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\r\n\t\t\t\t\t\t\t<td></td>\r\n\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\r\n\t\t\t<hr>\r\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\r\n\t\t\t\t(keyup.enter)=\"enterRework()\">\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><div\r\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, 0, \r\n\t\t\t\t\t\t\t\ttrue)\"></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\r\n\t\t\t\t\t\t\tclass=\"form-control\"><option\r\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\r\n\t\t\t\t\t\t</select></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Replacement:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\r\n\t\t\t\t</table>\r\n\r\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\r\n\r\n\t\t\t\t<hr>\r\n\t\t\t\t<h4>Color legend:</h4>\r\n\t\t\t\t<ul>\r\n\t\t\t\t\t<li *ngFor=\"let label of anonymizationHanlderService.getLabels()\">\r\n\t\t\t\t\t\t<div\r\n\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(label,label,0,true)\"></div>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>\r\n"
+
+/***/ }),
+
+/***/ "./src/app/control/control.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__model_anonymization__ = __webpack_require__("./src/app/model/anonymization.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_anonymization_handler_service__ = __webpack_require__("./src/app/services/anonymization-handler.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_http_service__ = __webpack_require__("./src/app/services/http.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ControlComponent; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+var ControlComponent = (function () {
+    /**
+     * Looks for params (document id) in the url to load already uploaded documents
+     */
+    function ControlComponent(httpService, anonymizationHanlderService, activatedRoute, elRef, renderer) {
+        this.httpService = httpService;
+        this.anonymizationHanlderService = anonymizationHanlderService;
+        this.activatedRoute = activatedRoute;
+        this.elRef = elRef;
+        this.renderer = renderer;
+        //  private param: string;
+        this.trigger = 0;
+        this.focusReworkArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
+        this.focusMainArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
+    }
+    ControlComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.httpService.getPreLoadDocument().then(function (doc) {
+            console.log(doc);
+            if (doc === null) {
+                console.log('no param found.');
+            }
+            else {
+                console.log('set up by document ' + doc);
+                _this.setUpFromDocument(doc);
+                _this.httpService.resetDocumentIndex();
+            }
+        });
+        this.focusMainArea.emit(true);
+    };
+    ControlComponent.prototype.updatePipe = function () {
+        this.trigger++;
+    };
+    /**
+     * Counts recursivly how much a span is encapsulated to calculate how thick the added border should be
+     * @param span the span which is looked at
+     * @param counter how much encapsulation layers are there
+     * @return the counted number
+     */
+    ControlComponent.prototype.countChildrenLayers = function (span, counter) {
+        var children = span.querySelectorAll('span');
+        if (children.length === 0) {
+            return counter;
+        }
+        else {
+            var maxCounter = 0;
+            for (var i = 0; i < children.length; ++i) {
+                maxCounter = Math.max(maxCounter, this.countChildrenLayers(children[i], counter + 1));
+            }
+            return maxCounter;
+        }
+    };
+    /**
+     * Is called every time the view is checked. It makes encapsulated anonymizations
+     * appear more distinguishable by adding a border to the containing one.
+     * Making the Anonymizations clickable would happen here, but actually it is not working... :(
+     */
+    ControlComponent.prototype.ngAfterViewChecked = function () {
+        var span = this.elRef.nativeElement.querySelectorAll('span');
+        if (span.length === 0) {
+            return;
+        }
+        for (var i = 0; i < span.length; ++i) {
+            var childrenCount = this.countChildrenLayers(span[i], 0);
+            if (childrenCount !== 0) {
+                this.renderer.setStyle(span[i], 'border', (2 * childrenCount) + 'px solid ' + span[i].style.backgroundColor);
+            }
+        }
+        //    this.renderer.listen(span[0], 'click', (evt) => {
+        //      console.log('First span clicked!');
+        //    });
+        //    span[0].addEventListener('click', this.onClickSpan);
+    };
+    /**
+     * Uploads the file to the backend and sets up the needed elements from the response
+     * @param event contains the uploaded files
+     */
+    ControlComponent.prototype.fileHandle = function (event) {
+        var _this = this;
+        var files = event.target.files || event.srcElement.files;
+        console.log(files);
+        this.httpService.postFile(files).then(function (response) {
+            return _this.setUpFromDocument(response);
+        });
+    };
+    /**
+     * Sets all needed parametes to be able to manually adjust anonymizations
+     * @param document object to set for manual adjustments
+     */
+    ControlComponent.prototype.setUpFromDocument = function (document) {
+        this.fileName = document.fileName;
+        this.docId = document.id;
+        this.version = document.version;
+        this.docFileType = document.originalFileType;
+        for (var i = 0; i < document.anonymizations.length; ++i) {
+            document.anonymizations[i].id = i + 1;
+        }
+        this.anonymizationHanlderService.setUpParams(document.displayableText, document.anonymizations);
+    };
+    /**
+     * Handles the operations on keypress (like a for accept)
+     * @param event the catched keyboard event to check which key is pressed
+     */
+    ControlComponent.prototype.keyControl = function (event) {
+        switch (event.charCode) {
+            case 97:
+                console.log('pressed a');
+                this.anonymizationHanlderService.acceptedActualAnonymization();
+                this.updatePipe();
+                this.save();
+                break;
+            case 119:
+                console.log('pressed w');
+                this.focusReworkArea.emit(true);
+                break;
+            case 100:
+                console.log('pressed d');
+                this.anonymizationHanlderService.declineActualAnonymization();
+                this.updatePipe();
+                this.save();
+                break;
+            case 115:
+                console.log('pressed s');
+                if (this.anonymizationHanlderService.getActuallyReworking() === undefined) {
+                    if (window.confirm('Really finished?')) {
+                        this.httpService.exportFile(this.docId);
+                        this.anonymizationHanlderService.resetDisplayableText();
+                    }
+                }
+                else {
+                    window.alert('There are still open anonymizations!');
+                    console.log('Document not finished!');
+                }
+                break;
+            default:
+        }
+    };
+    /**
+     * Saves the document after each interaction and checks if the version is ok (not -1)
+     * If not a request is shown if the document should be reloaded.
+     */
+    ControlComponent.prototype.save = function () {
+        var _this = this;
+        this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId, this.version)
+            .then(function (response) {
+            if (response.version === -1) {
+                if (window.confirm('The documents version is outdated!\nLoad new version?')) {
+                    _this.httpService.getDocument(_this.docId).then(function (response2) { return _this.setUpFromDocument(response2); });
+                }
+                else {
+                    window.alert('Following changes are not saved anymore!');
+                }
+            }
+            else {
+                _this.setUpFromDocument(response);
+                _this.updatePipe();
+            }
+            _this.httpService.unlockExport(_this.docId);
+        });
+    };
+    /**
+     * Sets the focus back to the main area if 'enter' was pressed in the rework area.
+     * In addition calls the necessary handler function for the reworked or added anonymization.
+     */
+    ControlComponent.prototype.enterRework = function () {
+        console.log('Hit Enter!');
+        this.focusMainArea.emit(true);
+        if (this.anonymizationHanlderService.getActuallyReworking().id === (this.anonymizationHanlderService.getMaxId() + 1)) {
+            console.log('add new anonymization!');
+            this.anonymizationHanlderService.addedNewAnonymization();
+        }
+        else {
+            this.anonymizationHanlderService.reworkedActualAnonymization();
+        }
+        this.save();
+    };
+    /**
+     * To make the selection and the span text comparable
+     * @param word to replace linebreak by space
+     * @return the prepared string
+     */
+    ControlComponent.prototype.dismissLineBreak = function (word) {
+        word = word.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+        word = word.replace(/( )*\r\n( )*/g, ' ');
+        word = word.replace(/( )*\n( )*/g, ' ');
+        return word;
+    };
+    /**
+     * Searches for a span which holds the given text
+     *
+     * @param selectedText text to search for in the span element list
+     * @return -1 if no span contains the text or the id of the span which
+     * in fact is the id of the contained anonymization
+     */
+    ControlComponent.prototype.findIdOfSelectedSpan = function (selectedText) {
+        var spanTags = document.getElementsByTagName('span');
+        for (var i = 0; i < spanTags.length; i++) {
+            if (this.dismissLineBreak(spanTags[i].textContent) === this.dismissLineBreak(selectedText)) {
+                return +spanTags[i].id;
+            }
+        }
+        return -1;
+    };
+    /**
+     * Sets up a new anonymization with HUMAN as producer if something of the text
+     * is selected.
+     */
+    ControlComponent.prototype.getSelectionText = function () {
+        console.log('getSelectionText Entered.');
+        var selectedText;
+        if (window.getSelection) {
+            selectedText = window.getSelection();
+        }
+        else if (document.getSelection) {
+            selectedText = document.getSelection();
+        }
+        selectedText = String(selectedText).trim();
+        // first check for wrong selections
+        if (selectedText === '' || selectedText === ' ') {
+            return;
+        }
+        var id = this.findIdOfSelectedSpan(selectedText);
+        if (id !== -1 && id !== 0) {
+            if (this.anonymizationHanlderService.reActivateAnonymization(id)) {
+                return;
+            }
+        }
+        this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__model_anonymization__["a" /* Anonymization */]();
+        this.tempAnonymization.data.original = selectedText.toString();
+        this.tempAnonymization.data.label = 'UNKNOWN';
+        this.tempAnonymization.data.replacement = '';
+        this.tempAnonymization.producer = 'HUMAN';
+        this.tempAnonymization.status = 'PROCESSING';
+        this.tempAnonymization.id = this.anonymizationHanlderService.getMaxId() + 1;
+        this.anonymizationHanlderService.setActualleReworking(this.tempAnonymization);
+        this.anonymizationHanlderService.setTemporatyAnonymization();
+        this.updatePipe();
+        this.focusReworkArea.emit(true);
+    };
+    return ControlComponent;
+}());
+ControlComponent = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__angular_core__["_14" /* Component */])({
+        selector: 'app-control',
+        template: __webpack_require__("./src/app/control/control.component.html"),
+        styles: [__webpack_require__("./src/app/control/control.component.css")],
+        providers: [__WEBPACK_IMPORTED_MODULE_3__services_http_service__["a" /* HttpService */], __WEBPACK_IMPORTED_MODULE_1__services_anonymization_handler_service__["a" /* AnonymizationHandlerService */]]
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__services_http_service__["a" /* HttpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_http_service__["a" /* HttpService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__services_anonymization_handler_service__["a" /* AnonymizationHandlerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_anonymization_handler_service__["a" /* AnonymizationHandlerService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_core__["M" /* ElementRef */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__angular_core__["_15" /* Renderer2 */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_core__["_15" /* Renderer2 */]) === "function" && _e || Object])
+], ControlComponent);
+
+var _a, _b, _c, _d, _e;
+//# sourceMappingURL=control.component.js.map
+
+/***/ }),
+
+/***/ "./src/app/directives/focus-main.directive.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FocusMainDirective; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+var FocusMainDirective = (function () {
+    function FocusMainDirective(element, renderer) {
+        this.element = element;
+        this.renderer = renderer;
+    }
+    FocusMainDirective.prototype.ngOnInit = function () {
+        var _this = this;
+        this.appFocusMain.subscribe(function (event) {
+            _this.renderer.invokeElementMethod(_this.element.nativeElement, 'focus', []);
+        });
+    };
+    return FocusMainDirective;
+}());
+__decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["O" /* Input */])(),
+    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* EventEmitter */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* EventEmitter */]) === "function" && _a || Object)
+], FocusMainDirective.prototype, "appFocusMain", void 0);
+FocusMainDirective = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["J" /* Directive */])({
+        selector: '[appFocusMain]'
+    }),
+    __param(0, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* Inject */])(__WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */])),
+    __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["N" /* Renderer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["N" /* Renderer */]) === "function" && _c || Object])
+], FocusMainDirective);
+
+var _a, _b, _c;
+//# sourceMappingURL=focus-main.directive.js.map
+
+/***/ }),
+
+/***/ "./src/app/directives/focus-rework.directive.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FocusReworkDirective; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+var FocusReworkDirective = (function () {
+    function FocusReworkDirective(element, renderer) {
+        this.element = element;
+        this.renderer = renderer;
+    }
+    FocusReworkDirective.prototype.ngOnInit = function () {
+        var _this = this;
+        this.appFocusRework.subscribe(function (event) {
+            _this.renderer.invokeElementMethod(_this.element.nativeElement, 'focus', []);
+        });
+    };
+    return FocusReworkDirective;
+}());
+__decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["O" /* Input */])(),
+    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* EventEmitter */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* EventEmitter */]) === "function" && _a || Object)
+], FocusReworkDirective.prototype, "appFocusRework", void 0);
+FocusReworkDirective = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["J" /* Directive */])({
+        selector: '[appFocusRework]'
+    }),
+    __param(0, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* Inject */])(__WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */])),
+    __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["N" /* Renderer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["N" /* Renderer */]) === "function" && _c || Object])
+], FocusReworkDirective);
+
+var _a, _b, _c;
+//# sourceMappingURL=focus-rework.directive.js.map
+
+/***/ }),
+
+/***/ "./src/app/highlight-anonymization.pipe.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__services_anonymization_handler_service__ = __webpack_require__("./src/app/services/anonymization-handler.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__ = __webpack_require__("./node_modules/@angular/platform-browser/@angular/platform-browser.es5.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HighlightAnonymizationPipe; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+var HighlightAnonymizationPipe = (function () {
+    function HighlightAnonymizationPipe(anonymizationHanlderService, sanitizer) {
+        this.anonymizationHanlderService = anonymizationHanlderService;
+        this.sanitizer = sanitizer;
+    }
+    /**
+     * Finds the originals of the anonymizations from the list (with regex) and replaces them in the
+     * displayable text by a <span> element to set a background color according to the Label of the
+     * anonymization. If the anonymization is the next one then there
+     * are added red marks before and after to mark the actually looked at.
+     *
+     * @param value is the text which is actually piped in the view
+     * @param anonymizations is the list of anonymizations which should be highlighted
+     * @param trigger a number which is incremented to trigger the pipe function
+     * @return html with the originals replaced by the <span> object to highlight it
+     */
+    HighlightAnonymizationPipe.prototype.transform = function (value, anonymizations, trigger) {
+        console.log('Pipe highlightAnonymization entered.' + trigger);
+        var newValue = value;
+        var replacement = '';
+        for (var i = 0; i < anonymizations.length; ++i) {
+            replacement = '';
+            if (this.anonymizationHanlderService.findAnonymizationsByStatus('ACCEPTED').includes(anonymizations[i].id)) {
+                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:DarkGrey" data-toggle="tooltip" title="'
+                    + this.anonymizationHanlderService.notFindOriginal(anonymizations[i].data.original) + '">'
+                    + anonymizations[i].data.replacement + '</span>';
+            }
+            else if (this.anonymizationHanlderService.findAnonymizationsByStatus('DECLINED').includes(anonymizations[i].id)) {
+                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:rgb(150, 200, 255, 0.1)">'
+                    + anonymizations[i].data.original.replace(/\n/g, '<br/>') + '</span>';
+            }
+            else {
+                if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
+                    replacement = '<span style="background-color:rgb(255,0,0)">O</span>';
+                }
+                replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].data.label, anonymizations[i].data.original.replace(/\n/g, '<br/>'), anonymizations[i].id, false);
+                if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
+                    replacement += '<span style="background-color:rgb(255,0,0)">O</span>';
+                }
+            }
+            newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g'), replacement);
+        }
+        return this.sanitizer.bypassSecurityTrustHtml(newValue);
+    };
+    return HighlightAnonymizationPipe;
+}());
+HighlightAnonymizationPipe = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_core__["Y" /* Pipe */])({
+        name: 'highlightAnonymization'
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__services_anonymization_handler_service__["a" /* AnonymizationHandlerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__services_anonymization_handler_service__["a" /* AnonymizationHandlerService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__["c" /* DomSanitizer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__["c" /* DomSanitizer */]) === "function" && _b || Object])
+], HighlightAnonymizationPipe);
+
+var _a, _b;
+//# sourceMappingURL=highlight-anonymization.pipe.js.map
+
+/***/ }),
+
+/***/ "./src/app/model/anonymization.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__replacement__ = __webpack_require__("./src/app/model/replacement.ts");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Anonymization; });
+
+var Anonymization = (function () {
+    function Anonymization() {
+        this.data = new __WEBPACK_IMPORTED_MODULE_0__replacement__["a" /* Replacement */]();
+    }
+    return Anonymization;
+}());
+
+//# sourceMappingURL=anonymization.js.map
+
+/***/ }),
+
+/***/ "./src/app/model/replacement.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Replacement; });
+var Replacement = (function () {
+    function Replacement() {
+    }
+    return Replacement;
+}());
+
+//# sourceMappingURL=replacement.js.map
+
+/***/ }),
+
+/***/ "./src/app/services/anonymization-handler.service.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__http_service__ = __webpack_require__("./src/app/services/http.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__ = __webpack_require__("./node_modules/@angular/platform-browser/@angular/platform-browser.es5.js");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AnonymizationHandlerService; });
@@ -66,17 +700,20 @@ var AnonymizationHandlerService = (function () {
         }
         return -1;
     };
+    /**
+     * Searches the id of the anonymization to activate by given anonymization id, sets it to PROCESSING and to actuallyReworking
+     * @param id of the anonymization which should be activated
+     * @return false if the anonymization is not found and else true
+     */
     AnonymizationHandlerService.prototype.reActivateAnonymization = function (id) {
         var index = this.findAnonymizationById(id);
         console.log('found index: ' + index);
-        if (this.anonymizations[index].status !== 'PROCESSING') {
-            var anonymization = this.anonymizations[index].status = 'PROCESSING';
-            this.actuallyReworking = this.anonymizations[index];
-            return true;
-        }
-        else {
+        if (index === -1) {
             return false;
         }
+        var anonymization = this.anonymizations[index].status = 'PROCESSING';
+        this.actuallyReworking = this.anonymizations[index];
+        return true;
     };
     /**
      * Finds all of the processed anonymizations which are labeled with the given status.
@@ -110,17 +747,18 @@ var AnonymizationHandlerService = (function () {
      * Generates a <span> element with different background colors based on the index of the given label
      * @param label one of the loaded labels (e.g. Person, Organization) which the color bases on
      * @param original the word(-sequence) which is placed in the <span>
+     * @param id of the anonymization to set as id of the span
      * @param asHTML directly sanitize as HTML or not
      * @return a string or a HTML based on the asHTML parameter
      */
-    AnonymizationHandlerService.prototype.generateColorForLabel = function (label, original, asHTML) {
+    AnonymizationHandlerService.prototype.generateColorForLabel = function (label, original, id, asHTML) {
         var replacement = '';
         var indexOfLabel = this.allLabels.indexOf(label);
         if (indexOfLabel === -1) {
             replacement += '<span style="background-color:rgb( 255 , 255, 255)">' + original + '</span>';
         }
         else {
-            replacement += '<span style="background-color:';
+            replacement += '<span id = ' + id + ' style="background-color:';
             switch (indexOfLabel) {
                 case 0:
                     replacement += 'rgb(60, 180, 75)';
@@ -129,7 +767,7 @@ var AnonymizationHandlerService = (function () {
                     replacement += 'rgb(255, 225, 25)';
                     break;
                 case 2:
-                    replacement += 'rgb(0, 130, 200)';
+                    replacement += 'rgb(70, 240, 240)';
                     break;
                 case 3:
                     replacement += 'rgb(245, 130, 48)';
@@ -306,586 +944,7 @@ var _a, _b;
 
 /***/ }),
 
-/***/ "./src/app/anonymization.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__replacement__ = __webpack_require__("./src/app/replacement.ts");
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Anonymization; });
-
-var Anonymization = (function () {
-    function Anonymization() {
-        this.data = new __WEBPACK_IMPORTED_MODULE_0__replacement__["a" /* Replacement */]();
-    }
-    return Anonymization;
-}());
-
-//# sourceMappingURL=anonymization.js.map
-
-/***/ }),
-
-/***/ "./src/app/app.component.css":
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "", ""]);
-
-// exports
-
-
-/*** EXPORTS FROM exports-loader ***/
-module.exports = module.exports.toString();
-
-/***/ }),
-
-/***/ "./src/app/app.component.html":
-/***/ (function(module, exports) {
-
-module.exports = "<router-outlet></router-outlet>"
-
-/***/ }),
-
-/***/ "./src/app/app.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-var AppComponent = (function () {
-    function AppComponent() {
-        this.title = 'AnonML';
-    }
-    return AppComponent;
-}());
-AppComponent = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* Component */])({
-        selector: 'app-root',
-        template: __webpack_require__("./src/app/app.component.html"),
-        styles: [__webpack_require__("./src/app/app.component.css")]
-    })
-], AppComponent);
-
-//# sourceMappingURL=app.component.js.map
-
-/***/ }),
-
-/***/ "./src/app/app.module.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__("./node_modules/@angular/platform-browser/@angular/platform-browser.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__("./node_modules/@angular/forms/@angular/forms.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__("./node_modules/@angular/http/@angular/http.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__("./src/app/app.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__highlight_anonymization_pipe__ = __webpack_require__("./src/app/highlight-anonymization.pipe.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__focus_rework_directive__ = __webpack_require__("./src/app/focus-rework.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__focus_main_directive__ = __webpack_require__("./src/app/focus-main.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__control_component__ = __webpack_require__("./src/app/control.component.ts");
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-
-
-
-
-
-
-
-
-
-var appRoutes = [
-    { path: '', component: __WEBPACK_IMPORTED_MODULE_9__control_component__["a" /* ControlComponent */] },
-    { path: 'document/:id', component: __WEBPACK_IMPORTED_MODULE_9__control_component__["a" /* ControlComponent */] },
-    { path: '**', redirectTo: '' }
-];
-var AppModule = (function () {
-    function AppModule() {
-    }
-    return AppModule;
-}());
-AppModule = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_core__["b" /* NgModule */])({
-        declarations: [
-            __WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */],
-            __WEBPACK_IMPORTED_MODULE_5__highlight_anonymization_pipe__["a" /* HighlightAnonymizationPipe */],
-            __WEBPACK_IMPORTED_MODULE_6__focus_rework_directive__["a" /* FocusReworkDirective */],
-            __WEBPACK_IMPORTED_MODULE_7__focus_main_directive__["a" /* FocusMainDirective */],
-            __WEBPACK_IMPORTED_MODULE_9__control_component__["a" /* ControlComponent */],
-        ],
-        imports: [
-            __WEBPACK_IMPORTED_MODULE_8__angular_router__["a" /* RouterModule */].forRoot(appRoutes),
-            __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
-            __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormsModule */],
-            __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* HttpModule */]
-        ],
-        providers: [],
-        bootstrap: [__WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */]]
-    })
-], AppModule);
-
-//# sourceMappingURL=app.module.js.map
-
-/***/ }),
-
-/***/ "./src/app/control.component.css":
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "/* Set height of the grid so .sidenav can be 100% (adjust if needed) */\r\n.row.content {\r\n\theight: 1500px;\r\n}\r\n\r\n/* Set gray background color and 100% height */\r\n.sidenav {\r\n\tbackground-color: #f1f1f1;\r\n\theight: 100%;\r\n\tpadding-left: 5%;\r\n\tpadding-top: 1%;\r\n}\r\n\r\n/* Set black background color, white text and some padding */\r\nfooter {\r\n\tbackground-color: #555;\r\n\tcolor: white;\r\n\tpadding: 15px;\r\n}\r\n\r\n/* On small screens, set height to 'auto' for sidenav and grid */\r\n@media screen and (max-width: 767px) {\r\n\t.sidenav {\r\n\t\theight: auto;\r\n\t\tpadding: 15px;\r\n\t}\r\n\t.row.content {\r\n\t\theight: auto;\r\n\t}\r\n}\r\n\r\n.btn-sq-lg {\r\n  width:65px !important;\r\n  height:65px !important;\r\n}\r\n\r\n.btn-sq-sm {\r\n  width:32px !important;\r\n  height:32px !important;\r\n}\r\n\r\n/* layout.css Style */\r\n.upload-drop-zone {\r\n  height: 30%;\r\n  width: 100%;\r\n  border-width: 2px;\r\n  margin-bottom: 20px;\r\n}\r\n\r\n/* skin.css Style*/\r\n.upload-drop-zone {\r\n  color: #ccc;\r\n  border-style: dashed;\r\n  border-color: #ccc;\r\n  line-height: 400px;\r\n  text-align: center\r\n}\r\n.upload-drop-zone.drop {\r\n  color: #222;\r\n  border-color: #222;\r\n}\r\n\r\n.white {\r\n\tbackground-color: white;\r\n\tpadding-left: 1%;\r\n\t\r\n}\r\n\r\n.fixed-panel {\r\n  min-height: 1000px;\r\n  max-height: 1000px;\r\n  overflow-y: scroll;\r\n}\r\n\r\n.verticalLine {\r\n  border-left: thick solid #ff0000;\r\n}\r\n\r\n.lineHeightNestedAnons {\r\n\tline-height: 165%;\r\n}", ""]);
-
-// exports
-
-
-/*** EXPORTS FROM exports-loader ***/
-module.exports = module.exports.toString();
-
-/***/ }),
-
-/***/ "./src/app/control.component.html":
-/***/ (function(module, exports) {
-
-module.exports = "<div class=\"container-fluid\">\r\n\t<div class=\"row content\">\r\n\t\t<div *ngIf=\"!anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<input id=\"input-1\" type=\"file\" class=\"upload-drop-zone file\"\r\n\t\t\t\t(change)=\"fileHandle($event)\">\r\n\t\t</div>\r\n\t\t<div id=\"controlId\" tabindex=\"1\" [appFocusRework]=\"focusMainArea\"\r\n\t\t\t(keypress)=\"keyControl($event)\"\r\n\t\t\t*ngIf=\"anonymizationHanlderService.displayableText\"\r\n\t\t\tclass=\"col-sm-10 sidenav\">\r\n\t\t\t<button type=\"button\" class=\"btn btn-secondary\">{{fileName}}</button>\r\n\t\t\t<div class=\"panel panel-default\">\r\n\t\t\t\t<div class=\"panel-body white fixed-panel\"\r\n\t\t\t\t\t(mouseup)=\"getSelectionText()\">\r\n\t\t\t\t\t<div class=\"lineHeightNestedAnons\"\r\n\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.displayableText | highlightAnonymization:anonymizationHanlderService.getAnonymizations():trigger\"></div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div class=\"col-sm-2\">\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<a target=\"_blank\" href=\"http://localhost:7000/overview\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Dokumentenmanagement</button></a>&nbsp;<a\r\n\t\t\t\t\ttarget=\"_blank\"\r\n\t\t\t\t\thref=\"https://github.com/anon-ml/anonml-gui/wiki/Control\"><button\r\n\t\t\t\t\t\ttype=\"button\" class=\"btn btn-link\">Help</button></a>\r\n\r\n\t\t\t</div>\r\n\t\t\t<hr>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<h4>Steuerung:</h4>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div class=\"col-sm-1\"></div>\r\n\t\t\t\t<div class=\"col-sm-5\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">w</button></td>\r\n\t\t\t\t\t\t\t<td></td>\r\n\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">a</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">s</button></td>\r\n\t\t\t\t\t\t\t<td><button type=\"button\" class=\"btn btn-sq-sm btn-default\">d</button></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<div class=\"row\">\r\n\t\t\t\t<div class=\"col-md-8 col-md-offset-2\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">a</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>a</b>ccept\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">d</button></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>d</b>ecline\r\n\t\t\t\t\t\t\t\t</h4>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">w</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;re<b>w</b>ork\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><button type=\"button\"\r\n\t\t\t\t\t\t\t\t\tclass=\"btn btn-sq-lg btn-default btn-lg\">s</button></td>\r\n\t\t\t\t\t\t\t<td><h4>\r\n\t\t\t\t\t\t\t\t\t:&nbsp;<b>s</b>ave\r\n\t\t\t\t\t\t\t\t</h4></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\r\n\t\t\t<hr>\r\n\t\t\t<div *ngIf=\"anonymizationHanlderService.getActuallyReworking()\"\r\n\t\t\t\t(keyup.enter)=\"enterRework()\">\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h4>Annotation:</h4></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><div\r\n\t\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(\r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.label, \r\n\t\t\t\t\t\t\t\tanonymizationHanlderService.getActuallyReworking().data.original, \r\n\t\t\t\t\t\t\t\ttrue)\"></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Label:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><select [appFocusRework]=\"focusReworkArea\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.label\"\r\n\t\t\t\t\t\t\tclass=\"form-control\"><option\r\n\t\t\t\t\t\t\t\t\t*ngFor=\"let label of anonymizationHanlderService.getLabels()\">{{label}}</option>\r\n\t\t\t\t\t\t</select></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><h3>Ersetzung:</h3></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td><input type=\"text\" class=\"form-control\" id=\"ersetzung\"\r\n\t\t\t\t\t\t\t[(ngModel)]=\"anonymizationHanlderService.getActuallyReworking().data.replacement\"></td>\r\n\t\t\t\t\t</tr>\r\n\r\n\r\n\t\t\t\t</table>\r\n\r\n\t\t\t\t<a>Just hit 'Enter' to accept the changes!</a>\r\n\r\n\t\t\t\t<hr>\r\n\t\t\t\t<h4>Farblegende:</h4>\r\n\t\t\t\t<ul>\r\n\t\t\t\t\t<li *ngFor=\"let label of anonymizationHanlderService.getLabels()\">\r\n\t\t\t\t\t\t<div\r\n\t\t\t\t\t\t\t[innerHtml]=\"anonymizationHanlderService.generateColorForLabel(label,label,true)\"></div>\r\n\t\t\t\t\t</li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>\r\n"
-
-/***/ }),
-
-/***/ "./src/app/control.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__anonymization__ = __webpack_require__("./src/app/anonymization.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__ = __webpack_require__("./src/app/anonymization-handler.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__http_service__ = __webpack_require__("./src/app/http.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_router__ = __webpack_require__("./node_modules/@angular/router/@angular/router.es5.js");
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ControlComponent; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-
-
-var ControlComponent = (function () {
-    function ControlComponent(httpService, anonymizationHanlderService, activatedRoute, elRef, renderer) {
-        var _this = this;
-        this.httpService = httpService;
-        this.anonymizationHanlderService = anonymizationHanlderService;
-        this.activatedRoute = activatedRoute;
-        this.elRef = elRef;
-        this.renderer = renderer;
-        this.trigger = 0;
-        this.focusReworkArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
-        this.focusMainArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
-        activatedRoute.params.subscribe(function (param) { return _this.param = param.id; });
-        console.log(this.param);
-        if (this.param === undefined || this.param === '') {
-            console.log('no param found.');
-        }
-        else {
-            this.httpService.getDocument(this.param).then(function (response) {
-                return _this.setUpFromDocument(response);
-            });
-        }
-        this.focusMainArea.emit(true);
-    }
-    ControlComponent.prototype.updatePipe = function () {
-        this.trigger++;
-    };
-    ControlComponent.prototype.countChildrenLayers = function (span, counter) {
-        var children = span.querySelectorAll('span');
-        if (children.length === 0) {
-            return counter;
-        }
-        else {
-            var maxCounter = 0;
-            for (var i = 0; i < children.length; ++i) {
-                maxCounter = Math.max(maxCounter, this.countChildrenLayers(children[i], counter + 1));
-            }
-            return maxCounter;
-        }
-    };
-    ControlComponent.prototype.ngAfterViewChecked = function () {
-        console.log('bigger if nested');
-        var span = this.elRef.nativeElement.querySelectorAll('span');
-        if (span.length === 0) {
-            console.log('span null ');
-            return;
-        }
-        for (var i = 0; i < span.length; ++i) {
-            var childrenCount = this.countChildrenLayers(span[i], 0);
-            if (childrenCount !== 0) {
-                this.renderer.setStyle(span[i], 'border', (2 * childrenCount) + 'px solid ' + span[i].style.backgroundColor);
-            }
-        }
-        //    this.renderer.listen(span[0], 'click', (evt) => {
-        //      console.log('First span clicked!');
-        //    });
-        //    span[0].addEventListener('click', this.onClickSpan);
-    };
-    /**
-     * Uploads the file to the backend and sets up the needed elements from the response
-     * @param event contains the uploaded files
-     */
-    ControlComponent.prototype.fileHandle = function (event) {
-        var _this = this;
-        var files = event.target.files || event.srcElement.files;
-        console.log(files);
-        this.httpService.postFile(files).then(function (response) {
-            return _this.setUpFromDocument(response);
-        });
-    };
-    ControlComponent.prototype.setUpFromDocument = function (document) {
-        this.fileName = document.fileName;
-        this.docId = document.id;
-        this.version = document.version;
-        this.docFileType = document.originalFileType;
-        for (var i = 0; i < document.anonymizations.length; ++i) {
-            document.anonymizations[i].id = i + 1;
-        }
-        this.anonymizationHanlderService.setUpParams(document.displayableText, document.anonymizations);
-    };
-    /**
-     * Handles the operations on keypress (like a for accept)
-     * @param event the catched keyboard event to check which key is pressed
-     */
-    ControlComponent.prototype.keyControl = function (event) {
-        switch (event.charCode) {
-            case 97:
-                console.log('pressed a');
-                this.anonymizationHanlderService.acceptedActualAnonymization();
-                this.updatePipe();
-                this.save();
-                break;
-            case 119:
-                console.log('pressed w');
-                this.focusReworkArea.emit(true);
-                break;
-            case 100:
-                console.log('pressed d');
-                this.anonymizationHanlderService.declineActualAnonymization();
-                this.updatePipe();
-                this.save();
-                break;
-            case 115:
-                console.log('pressed s');
-                if (this.anonymizationHanlderService.getActuallyReworking() === undefined) {
-                    if (window.confirm('Wirklich fertig?')) {
-                        this.httpService.exportFile(this.docId);
-                        this.anonymizationHanlderService.resetDisplayableText();
-                    }
-                }
-                else {
-                    window.alert('Es sind noch offene Anonymisierungen vorhanden!');
-                    console.log('Document not finished!');
-                }
-                break;
-            default:
-        }
-    };
-    ControlComponent.prototype.save = function () {
-        var _this = this;
-        this.httpService.saveFile(this.anonymizationHanlderService.getAnonymizations(), this.docId, this.version)
-            .then(function (response) {
-            if (response.version === -1) {
-                if (window.confirm('Das Dokument ist nicht mehr aktuell!\nNeuen Stand laden?')) {
-                    _this.httpService.getDocument(_this.docId).then(function (response2) { return _this.setUpFromDocument(response2); });
-                }
-                else {
-                    window.alert('Weitere Aenderungen werden nicht gespeichert!');
-                }
-            }
-            else {
-                _this.setUpFromDocument(response);
-                _this.updatePipe();
-            }
-            _this.httpService.unlockExport(_this.docId);
-        });
-    };
-    /**
-     * Sets the focus back to the main area if 'enter' was pressed in the rework area.
-     * In addition calls the necessary handler function for the reworked or added anonymization.
-     */
-    ControlComponent.prototype.enterRework = function () {
-        console.log('Hit Enter!');
-        this.focusMainArea.emit(true);
-        if (this.anonymizationHanlderService.getActuallyReworking().id === (this.anonymizationHanlderService.getMaxId() + 1)) {
-            console.log('add new anonymization!');
-            this.anonymizationHanlderService.addedNewAnonymization();
-        }
-        else {
-            this.anonymizationHanlderService.reworkedActualAnonymization();
-        }
-        this.save();
-    };
-    ControlComponent.prototype.findIdOfSelectedSpan = function (selectedText) {
-        var spanTags = document.getElementsByTagName('span');
-        var foundId = -1;
-        for (var i = 0; i < spanTags.length; i++) {
-            if (spanTags[i].textContent === selectedText.toString()) {
-                foundId = +spanTags[i].id;
-                break;
-            }
-        }
-        return foundId;
-    };
-    /**
-     * Sets up a new anonymization with HUMAN as producer if something of the text
-     * is selected.
-     */
-    ControlComponent.prototype.getSelectionText = function () {
-        console.log('getSelectionText Entered.');
-        var selectedText;
-        if (window.getSelection) {
-            selectedText = window.getSelection();
-        }
-        else if (document.getSelection) {
-            selectedText = document.getSelection();
-        }
-        var id = this.findIdOfSelectedSpan(selectedText);
-        if (id !== -1 && id !== 0) {
-            if (this.anonymizationHanlderService.reActivateAnonymization(id)) {
-                return;
-            }
-        }
-        // first check for wrong selections
-        if (String(selectedText) === '' || String(selectedText) === ' ') {
-            return;
-        }
-        this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__anonymization__["a" /* Anonymization */]();
-        this.tempAnonymization.data.original = selectedText.toString();
-        this.tempAnonymization.data.label = 'UNKNOWN';
-        this.tempAnonymization.data.replacement = '';
-        this.tempAnonymization.producer = 'HUMAN';
-        this.tempAnonymization.status = 'PROCESSING';
-        this.tempAnonymization.id = this.anonymizationHanlderService.getMaxId() + 1;
-        this.anonymizationHanlderService.setActualleReworking(this.tempAnonymization);
-        this.anonymizationHanlderService.setTemporatyAnonymization();
-        this.updatePipe();
-        this.focusReworkArea.emit(true);
-    };
-    return ControlComponent;
-}());
-ControlComponent = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__angular_core__["_14" /* Component */])({
-        selector: 'app-control',
-        template: __webpack_require__("./src/app/control.component.html"),
-        styles: [__webpack_require__("./src/app/control.component.css")],
-        providers: [__WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */], __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]]
-    }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__http_service__["a" /* HttpService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__anonymization_handler_service__["a" /* AnonymizationHandlerService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_router__["b" /* ActivatedRoute */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_core__["M" /* ElementRef */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__angular_core__["_15" /* Renderer2 */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_core__["_15" /* Renderer2 */]) === "function" && _e || Object])
-], ControlComponent);
-
-var _a, _b, _c, _d, _e;
-//# sourceMappingURL=control.component.js.map
-
-/***/ }),
-
-/***/ "./src/app/focus-main.directive.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FocusMainDirective; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-
-var FocusMainDirective = (function () {
-    function FocusMainDirective(element, renderer) {
-        this.element = element;
-        this.renderer = renderer;
-    }
-    FocusMainDirective.prototype.ngOnInit = function () {
-        var _this = this;
-        this.appFocusMain.subscribe(function (event) {
-            _this.renderer.invokeElementMethod(_this.element.nativeElement, 'focus', []);
-        });
-    };
-    return FocusMainDirective;
-}());
-__decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["O" /* Input */])(),
-    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* EventEmitter */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* EventEmitter */]) === "function" && _a || Object)
-], FocusMainDirective.prototype, "appFocusMain", void 0);
-FocusMainDirective = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["J" /* Directive */])({
-        selector: '[appFocusMain]'
-    }),
-    __param(0, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* Inject */])(__WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */])),
-    __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["N" /* Renderer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["N" /* Renderer */]) === "function" && _c || Object])
-], FocusMainDirective);
-
-var _a, _b, _c;
-//# sourceMappingURL=focus-main.directive.js.map
-
-/***/ }),
-
-/***/ "./src/app/focus-rework.directive.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FocusReworkDirective; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-
-var FocusReworkDirective = (function () {
-    function FocusReworkDirective(element, renderer) {
-        this.element = element;
-        this.renderer = renderer;
-    }
-    FocusReworkDirective.prototype.ngOnInit = function () {
-        var _this = this;
-        this.appFocusRework.subscribe(function (event) {
-            _this.renderer.invokeElementMethod(_this.element.nativeElement, 'focus', []);
-        });
-    };
-    return FocusReworkDirective;
-}());
-__decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["O" /* Input */])(),
-    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* EventEmitter */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* EventEmitter */]) === "function" && _a || Object)
-], FocusReworkDirective.prototype, "appFocusRework", void 0);
-FocusReworkDirective = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["J" /* Directive */])({
-        selector: '[appFocusRework]'
-    }),
-    __param(0, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* Inject */])(__WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */])),
-    __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["N" /* Renderer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["N" /* Renderer */]) === "function" && _c || Object])
-], FocusReworkDirective);
-
-var _a, _b, _c;
-//# sourceMappingURL=focus-rework.directive.js.map
-
-/***/ }),
-
-/***/ "./src/app/highlight-anonymization.pipe.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__anonymization_handler_service__ = __webpack_require__("./src/app/anonymization-handler.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__("./node_modules/@angular/core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__ = __webpack_require__("./node_modules/@angular/platform-browser/@angular/platform-browser.es5.js");
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HighlightAnonymizationPipe; });
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-var HighlightAnonymizationPipe = (function () {
-    function HighlightAnonymizationPipe(anonymizationHanlderService, sanitizer) {
-        this.anonymizationHanlderService = anonymizationHanlderService;
-        this.sanitizer = sanitizer;
-    }
-    /**
-     * Finds the originals of the anonymizations from the list (with regex) and replaces them in the
-     * displayable text by a <span> element to set a background color according to the Label of the
-     * anonymization. If the anonymization is the next one then there
-     * are added red marks before and after to mark the actually looked at.
-     *
-     * @param value is the text which is actually piped in the view
-     * @param anonymizations is the list of anonymizations which should be highlighted
-     * @param trigger a number which is incremented to trigger the pipe function
-     * @return html with the originals replaced by the <span> object to highlight it
-     */
-    HighlightAnonymizationPipe.prototype.transform = function (value, anonymizations, trigger) {
-        console.log('Pipe highlightAnonymization entered.' + trigger);
-        var newValue = value;
-        var replacement = '';
-        for (var i = 0; i < anonymizations.length; ++i) {
-            replacement = '';
-            if (this.anonymizationHanlderService.findAnonymizationsByStatus('ACCEPTED').includes(anonymizations[i].id)) {
-                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:DarkGrey" data-toggle="tooltip" title="'
-                    + this.anonymizationHanlderService.notFindOriginal(anonymizations[i].data.original) + '">'
-                    + anonymizations[i].data.replacement + '</span>';
-            }
-            else if (this.anonymizationHanlderService.findAnonymizationsByStatus('DECLINED').includes(anonymizations[i].id)) {
-                replacement = '<span id =' + anonymizations[i].id + ' style="background-color:rgb(150, 200, 255, 0.1)">'
-                    + anonymizations[i].data.original.replace(/\n/g, '<br/>') + '</span>';
-            }
-            else {
-                if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
-                    replacement = '<span style="background-color:rgb(255,0,0)">O</span>';
-                }
-                replacement += this.anonymizationHanlderService.generateColorForLabel(anonymizations[i].data.label, anonymizations[i].data.original.replace(/\n/g, '<br/>'), false);
-                if (anonymizations[i].id === this.anonymizationHanlderService.getActuallyReworking().id) {
-                    replacement += '<span style="background-color:rgb(255,0,0)">O</span>';
-                }
-            }
-            newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g'), replacement);
-        }
-        return this.sanitizer.bypassSecurityTrustHtml(newValue);
-    };
-    return HighlightAnonymizationPipe;
-}());
-HighlightAnonymizationPipe = __decorate([
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_core__["Y" /* Pipe */])({
-        name: 'highlightAnonymization'
-    }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__anonymization_handler_service__["a" /* AnonymizationHandlerService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__anonymization_handler_service__["a" /* AnonymizationHandlerService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__["c" /* DomSanitizer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__["c" /* DomSanitizer */]) === "function" && _b || Object])
-], HighlightAnonymizationPipe);
-
-var _a, _b;
-//# sourceMappingURL=highlight-anonymization.pipe.js.map
-
-/***/ }),
-
-/***/ "./src/app/http.service.ts":
+/***/ "./src/app/services/http.service.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -911,6 +970,7 @@ var HttpService = (function () {
         this.http = http;
         this.exportAccessed = false;
         this.lockedExport = false;
+        this.baseUrl = './api/';
         this.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]({});
         this.options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* RequestOptions */]();
     }
@@ -919,16 +979,24 @@ var HttpService = (function () {
      * @return Promise<string[]> a promise containing a list of strings (label names)
      */
     HttpService.prototype.getLabels = function () {
-        var url = '/api/labels';
+        var url = this.baseUrl + 'labels';
         return this.http.get(url).toPromise().then(function (response) { return response.json(); }).catch(this.handleError);
     };
     /**
-   * Loads all labels from the backend to have the actual ones
-   * @return Promise<string[]> a promise containing a list of strings (label names)
-   */
+     * Loads all labels from the backend to have the actual ones
+     * @return Promise<string[]> a promise containing a list of strings (label names)
+    */
     HttpService.prototype.getDocument = function (id) {
-        var url = '/api/document/' + id;
+        var url = this.baseUrl + 'document/' + id;
         return this.http.get(url).toPromise().then(function (response) { return response.json(); }).catch(this.handleError);
+    };
+    HttpService.prototype.getPreLoadDocument = function () {
+        var url = this.baseUrl + 'get/document/';
+        return this.http.get(url).toPromise().then(function (response) { return response.json(); }).catch(this.handleError);
+    };
+    HttpService.prototype.resetDocumentIndex = function () {
+        var url = this.baseUrl + 'reset/id';
+        return this.http.get(url).toPromise().then().catch(this.handleError);
     };
     /**
      * Sends the uploaded file as formData and get back the processed file as document object to display it
@@ -936,7 +1004,7 @@ var HttpService = (function () {
      * @return Promise<Document> a promise containing the processed file as Document object
      */
     HttpService.prototype.postFile = function (files) {
-        var url = '/api/upload';
+        var url = this.baseUrl + 'upload';
         var formData = new FormData();
         this.options.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
         for (var i = 0; i < files.length; i++) {
@@ -960,7 +1028,7 @@ var HttpService = (function () {
      */
     HttpService.prototype.saveFile = function (anonymizations, id, version) {
         this.lockedExport = true;
-        var url = '/api/update/anonymizations/' + id + '/' + version;
+        var url = this.baseUrl + 'update/anonymizations/' + id + '/' + version;
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]();
         headers.append('Content-Type', 'application/json');
         return this.http.post(url, JSON.stringify(anonymizations), { headers: headers })
@@ -972,7 +1040,7 @@ var HttpService = (function () {
             this.exportAccessed = true;
             return;
         }
-        window.location.replace('api/save/' + id);
+        window.location.replace(this.baseUrl + 'save/' + id);
         this.exportAccessed = false;
     };
     HttpService.prototype.handleError = function (error) {
@@ -988,21 +1056,6 @@ HttpService = __decorate([
 
 var _a;
 //# sourceMappingURL=http.service.js.map
-
-/***/ }),
-
-/***/ "./src/app/replacement.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Replacement; });
-var Replacement = (function () {
-    function Replacement() {
-    }
-    return Replacement;
-}());
-
-//# sourceMappingURL=replacement.js.map
 
 /***/ }),
 
