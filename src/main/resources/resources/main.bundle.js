@@ -197,15 +197,17 @@ var ControlComponent = (function () {
         this.focusReworkArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
         this.focusMainArea = new __WEBPACK_IMPORTED_MODULE_2__angular_core__["F" /* EventEmitter */]();
     }
+    /**
+     * Checks if there is set an id for preloading a document
+     */
     ControlComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.httpService.getPreLoadDocument().then(function (doc) {
-            console.log(doc);
             if (doc === null) {
                 console.log('no param found.');
             }
             else {
-                console.log('set up by document ' + doc);
+                console.log('set up by document.');
                 _this.setUpFromDocument(doc);
                 _this.httpService.resetDocumentIndex();
             }

@@ -45,6 +45,11 @@ public class AppController {
     private String adminUrl;
     @Value("${server.contextPath}")
     private String serverContextPath;
+    @Value("${admin.contextPath}")
+    private String adminContextPath;
+    @Value("${local}")
+    private boolean local;
+
 
 
     private String documentIndex = "";
@@ -79,10 +84,10 @@ public class AppController {
     }
 
     @RequestMapping(value = {"/api/get/document"}, method = RequestMethod.GET)
-    public ResponseEntity<Document> getDocument() {
+    public ResponseEntity<?> getDocument() {
         log.info("Get id");
         if(this.documentIndex.equals("")){
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok("null");
         }
         Document document = documentResource.findById(this.documentIndex);
         if (document.getState() == DocumentState.UPLOADED) {
@@ -94,15 +99,23 @@ public class AppController {
 
     @RequestMapping(value = {"/overview"}, method = RequestMethod.GET)
     public RedirectView adminOverview() {
-        log.info("overview accessed");
+        log.info("overview accessed is local?" + local);
+        if(local){
+            return new RedirectView(adminUrl + "/overview");
+        } else {
+            return new RedirectView(adminContextPath + "/overview");
+        }
 
-        return new RedirectView(adminUrl + "/overview");
     }
 
     @RequestMapping(value = {"/admin"}, method = RequestMethod.GET)
     public RedirectView admin() {
-        log.info("admin accessed");
-        return new RedirectView(adminUrl + "/admin");
+        log.info("admin accessed is local?" + local);
+        if(local){
+            return new RedirectView(adminUrl + "/admin");
+        } else {
+            return new RedirectView(adminContextPath + "/admin");
+        }
     }
 
     @RequestMapping(value = "/api/document/{id}", method = RequestMethod.GET)
