@@ -278,6 +278,7 @@ var ControlComponent = (function () {
         this.docId = document.id;
         this.version = document.version;
         this.docFileType = document.originalFileType;
+        this.fullText = document.fullText;
         for (var i = 0; i < document.anonymizations.length; ++i) {
             document.anonymizations[i].id = i + 1;
         }
@@ -411,7 +412,13 @@ var ControlComponent = (function () {
                 return;
             }
         }
-        selectedText = selectedText.replace(/\s*\r\n/g, ' \r\n');
+        selectedText = selectedText.replace(/\s*\r\n/g, '\\s*\\\r\\\n');
+        var regex = new RegExp(selectedText, 'g');
+        var found = this.fullText.match(regex);
+        if (found !== null) {
+            console.log('Found!');
+            selectedText = found[0];
+        }
         this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__model_anonymization__["a" /* Anonymization */]();
         this.tempAnonymization.data.original = selectedText;
         this.tempAnonymization.data.label = 'UNKNOWN';
@@ -599,7 +606,8 @@ var HighlightAnonymizationPipe = (function () {
                     replacement += '<span style="background-color:rgb(255,0,0)">O</span>';
                 }
             }
-            newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g'), replacement);
+            var regex = new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g');
+            newValue = newValue.replace(regex, replacement);
         }
         return this.sanitizer.bypassSecurityTrustHtml(newValue);
     };
