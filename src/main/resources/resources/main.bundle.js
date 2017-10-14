@@ -400,19 +400,20 @@ var ControlComponent = (function () {
         else if (document.getSelection) {
             selectedText = document.getSelection();
         }
-        selectedText = String(selectedText).trim();
+        selectedText = String(selectedText);
         // first check for wrong selections
         if (selectedText === '' || selectedText === ' ') {
             return;
         }
-        var id = this.findIdOfSelectedSpan(selectedText);
+        var id = this.findIdOfSelectedSpan(selectedText.trim());
         if (id !== -1 && id !== 0) {
             if (this.anonymizationHanlderService.reActivateAnonymization(id)) {
                 return;
             }
         }
+        selectedText = selectedText.replace(/\s*\r\n/g, ' \r\n');
         this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__model_anonymization__["a" /* Anonymization */]();
-        this.tempAnonymization.data.original = selectedText.toString();
+        this.tempAnonymization.data.original = selectedText;
         this.tempAnonymization.data.label = 'UNKNOWN';
         this.tempAnonymization.data.replacement = '';
         this.tempAnonymization.producer = 'HUMAN';
