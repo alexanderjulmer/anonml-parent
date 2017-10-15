@@ -401,23 +401,33 @@ var ControlComponent = (function () {
         else if (document.getSelection) {
             selectedText = document.getSelection();
         }
-        selectedText = String(selectedText);
+        selectedText = String(selectedText).trim();
         // first check for wrong selections
         if (selectedText === '' || selectedText === ' ') {
             return;
         }
-        var id = this.findIdOfSelectedSpan(selectedText.trim());
+        var id = this.findIdOfSelectedSpan(selectedText);
         if (id !== -1 && id !== 0) {
             if (this.anonymizationHanlderService.reActivateAnonymization(id)) {
                 return;
             }
         }
-        selectedText = selectedText.replace(/\s*\r\n/g, '\\s*\\\r\\\n');
-        var regex = new RegExp(selectedText, 'g');
-        var found = this.fullText.match(regex);
-        if (found !== null) {
-            console.log('Found!');
-            selectedText = found[0];
+        // Alle Events\r\n\r\nund Vortr�ge\r\n\r\n2017
+        console.log(this.fullText.indexOf(selectedText));
+        if (this.fullText.indexOf(selectedText) === -1) {
+            console.log('Selected not found - find match (regex)');
+            //      console.log(new RegExp(selectedText.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')))
+            var regex = new RegExp(selectedText.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')
+                .replace(/\s*\r\n/g, '\\s*\\\r\\\n\\s*'), 'g');
+            //      console.log(regex)
+            var found = this.fullText.match(regex);
+            if (found !== null) {
+                console.log('Found!');
+                selectedText = found[0];
+            }
+            else {
+                window.alert('The selection can not be found. Splitting the selection in two could help.');
+            }
         }
         this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__model_anonymization__["a" /* Anonymization */]();
         this.tempAnonymization.data.original = selectedText;
