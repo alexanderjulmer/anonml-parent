@@ -278,6 +278,7 @@ var ControlComponent = (function () {
         this.docId = document.id;
         this.version = document.version;
         this.docFileType = document.originalFileType;
+        this.fullText = document.fullText;
         for (var i = 0; i < document.anonymizations.length; ++i) {
             document.anonymizations[i].id = i + 1;
         }
@@ -411,8 +412,25 @@ var ControlComponent = (function () {
                 return;
             }
         }
+        // Alle Events\r\n\r\nund Vortr�ge\r\n\r\n2017
+        console.log(this.fullText.indexOf(selectedText));
+        if (this.fullText.indexOf(selectedText) === -1) {
+            console.log('Selected not found - find match (regex)');
+            //      console.log(new RegExp(selectedText.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')))
+            var regex = new RegExp(selectedText.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')
+                .replace(/\s*\r\n/g, '\\s*\\\r\\\n\\s*'), 'g');
+            //      console.log(regex)
+            var found = this.fullText.match(regex);
+            if (found !== null) {
+                console.log('Found!');
+                selectedText = found[0];
+            }
+            else {
+                window.alert('The selection can not be found. Splitting the selection in two could help.');
+            }
+        }
         this.tempAnonymization = new __WEBPACK_IMPORTED_MODULE_0__model_anonymization__["a" /* Anonymization */]();
-        this.tempAnonymization.data.original = selectedText.toString();
+        this.tempAnonymization.data.original = selectedText;
         this.tempAnonymization.data.label = 'UNKNOWN';
         this.tempAnonymization.data.replacement = '';
         this.tempAnonymization.producer = 'HUMAN';
@@ -598,7 +616,8 @@ var HighlightAnonymizationPipe = (function () {
                     replacement += '<span style="background-color:rgb(255,0,0)">O</span>';
                 }
             }
-            newValue = newValue.replace(new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g'), replacement);
+            var regex = new RegExp(this.anonymizationHanlderService.formRegexFromOriginal(anonymizations[i].data.original), 'g');
+            newValue = newValue.replace(regex, replacement);
         }
         return this.sanitizer.bypassSecurityTrustHtml(newValue);
     };
