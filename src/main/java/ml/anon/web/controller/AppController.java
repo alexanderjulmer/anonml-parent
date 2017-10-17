@@ -101,7 +101,7 @@ public class AppController {
     public RedirectView adminOverview() {
         log.info("overview accessed is local?" + local);
         if(local){
-            return new RedirectView(adminUrl + "/overview");
+            return new RedirectView(adminUrl + adminContextPath + "/overview");
         } else {
             return new RedirectView(adminContextPath + "/overview");
         }
@@ -112,7 +112,7 @@ public class AppController {
     public RedirectView admin() {
         log.info("admin accessed is local?" + local);
         if(local){
-            return new RedirectView(adminUrl + "/admin");
+            return new RedirectView(adminUrl + adminContextPath + "/admin");
         } else {
             return new RedirectView(adminContextPath + "/admin");
         }
