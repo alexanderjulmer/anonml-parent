@@ -69,11 +69,7 @@ public class AppController {
     @RequestMapping(value = {"/document/{id}"}, method = RequestMethod.GET)
     public RedirectView setDocumentIndex(@PathVariable("id") String id) {
         log.info("Set id: " + id);
-        if(id.equals("reset")){
-            this.documentIndex = "";
-        } else {
-            this.documentIndex = id;
-        }
+        this.documentIndex = id;
         return new RedirectView(serverContextPath);
     }
 
